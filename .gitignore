@@ -1,0 +1,25 @@
+# ---- Secrets / Credentials (NEVER commit) ----
+config/db.php
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.crt
+credentials*.json
+secrets*.json
+
+# ---- Logs ----
+*.log
+logs/
+
+# ---- OS / Editor ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# ---- Runtime ----
+node_modules/
+vendor/
+*.sql.bak

@@ -1,0 +1,16 @@
+# Notice attachments are served ONLY through
+# teacher/notices/download.php, which checks the teacher session and the
+# notice targeting rules before sending the file.
+#
+# .htaccess below blocks direct HTTP access to everything in this folder, so
+# an attachment cannot be fetched by guessing uploads/notices/<file name>.
+# (Apache 2.4 "Require all denied".)
+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
