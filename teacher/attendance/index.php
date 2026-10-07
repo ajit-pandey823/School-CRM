@@ -69,98 +69,29 @@ $assignments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'attendance';
+$UI_TITLE        = 'Student Attendance';
+$UI_CRUMBS       = [['label' => 'Attendance', 'url' => 'index.php']];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Student Attendance</title>
+<div class="card mb-4">
+    <div class="card-header">
+        <strong>Student Attendance</strong>
+    </div>
+    <div class="card-body">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f6fa;
-            padding: 30px;
-            margin: 0;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: auto;
-        }
-
-        .card {
-            background: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.08);
-        }
-
-        h1 {
-            margin-top: 0;
-        }
-
-        .teacher-info {
-            color: #555;
-            margin-bottom: 20px;
-        }
-
-        .assignment {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 18px;
-            margin-bottom: 15px;
-        }
-
-        .assignment h3 {
-            margin-top: 0;
-        }
-
-        .info {
-            margin: 8px 0;
-            color: #555;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 18px;
-            background: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 6px;
-            margin-top: 10px;
-            margin-right: 8px;
-        }
-
-        .btn:hover {
-            background: #0056b3;
-        }
-
-        .empty {
-            padding: 20px;
-            background: #fff3cd;
-            border-radius: 6px;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="container">
-
-    <div class="card">
-
-        <h1>Student Attendance</h1>
-
-        <div class="teacher-info">
+        <p class="text-body-secondary">
             Teacher:
             <strong><?= htmlspecialchars($teacher_name) ?></strong>
-        </div>
+        </p>
 
         <?php if (empty($assignments)): ?>
 
-            <div class="empty">
+            <div class="alert alert-warning mb-0" role="alert">
                 No class or subject has been assigned to you yet.
             </div>
 
@@ -168,32 +99,33 @@ $assignments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
             <?php foreach ($assignments as $assignment): ?>
 
-                <div class="assignment">
+                <div class="card mb-3">
+                    <div class="card-body">
 
-                    <h3>Assigned Class</h3>
+                    <h5 class="card-title">Assigned Class</h5>
 
-                    <div class="info">
+                    <div class="mb-1 text-body-secondary">
                         Class:
                         <strong>
                             <?= htmlspecialchars($assignment["class_uid"]) ?>
                         </strong>
                     </div>
 
-                    <div class="info">
+                    <div class="mb-1 text-body-secondary">
                         Section:
                         <strong>
                             <?= htmlspecialchars($assignment["section_uid"]) ?>
                         </strong>
                     </div>
 
-                    <div class="info">
+                    <div class="mb-1 text-body-secondary">
                         Subject:
                         <strong>
                             <?= htmlspecialchars($assignment["subject_uid"]) ?>
                         </strong>
                     </div>
 
-                    <div class="info">
+                    <div class="mb-1 text-body-secondary">
                         Academic Year:
                         <strong>
                             <?= htmlspecialchars($assignment["academic_year_uid"]) ?>
@@ -201,19 +133,20 @@ $assignments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     </div>
 
                     <a
-                        class="btn"
+                        class="btn btn-primary mt-2 me-2"
                         href="take.php?assignment_uid=<?= urlencode($assignment["assignment_uid"]) ?>"
                     >
                         Take Attendance
                     </a>
 
                     <a
-                        class="btn"
+                        class="btn btn-outline-primary mt-2"
                         href="history.php?assignment_uid=<?= urlencode($assignment["assignment_uid"]) ?>"
                     >
                         Attendance History
                     </a>
 
+                    </div>
                 </div>
 
             <?php endforeach; ?>
@@ -221,8 +154,6 @@ $assignments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         <?php endif; ?>
 
     </div>
-
 </div>
 
-</body>
-</html>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

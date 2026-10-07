@@ -125,7 +125,7 @@ if ($user["status"] !== "active") {
 // =====================================================
 //
 // users.role_uid
-//       ↓
+//       â†“
 // roles.role_uid
 //
 // Agar role match nahi hua to access denied.
@@ -253,328 +253,32 @@ $role_name = $user["role_name"];
 
 ?>
 
-<!DOCTYPE html>
-
-<html lang="en">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Teacher Dashboard
-    </title>
-
-
-    <style>
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-
-        body {
-            background: #f4f6f8;
-            color: #222;
-        }
-
-
-        .container {
-            width: 90%;
-            max-width: 1100px;
-            margin: 40px auto;
-        }
-
-
-        /* ================================
-           WELCOME
-        ================================= */
-
-        .welcome {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow:
-                0 3px 12px
-                rgba(0,0,0,0.08);
-        }
-
-
-        .welcome h1 {
-            font-size: 30px;
-            margin-bottom: 8px;
-        }
-
-
-        .welcome h1 span {
-            color: #007bff;
-        }
-
-
-        .welcome p {
-            color: #777;
-        }
-
-
-        /* ================================
-           PROFILE CARD
-        ================================= */
-
-        .profile-card {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow:
-                0 3px 12px
-                rgba(0,0,0,0.08);
-        }
-
-
-        /* ================================
-           PROFILE HEADER
-        ================================= */
-
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding-bottom: 25px;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 25px;
-        }
-
-
-        /* ================================
-           PROFILE PHOTO
-        ================================= */
-
-        .profile-photo {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: #007bff;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 35px;
-            font-weight: bold;
-            overflow: hidden;
-        }
-
-
-        .profile-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-
-        .profile-header h2 {
-            margin-bottom: 6px;
-        }
-
-
-        .profile-header p {
-            color: #777;
-            margin-bottom: 8px;
-        }
-
-
-        /* ================================
-           ROLE BADGE
-        ================================= */
-
-        .role-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            background: #e7f1ff;
-            color: #007bff;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-
-        /* ================================
-           DETAILS
-        ================================= */
-
-        .details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-
-
-        .detail {
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-
-
-        .detail label {
-            display: block;
-            font-size: 13px;
-            color: #777;
-            margin-bottom: 6px;
-        }
-
-
-        .detail strong {
-            font-size: 15px;
-        }
-
-
-        /* ================================
-           STATUS
-        ================================= */
-
-        .status {
-            color: #28a745;
-            font-weight: bold;
-        }
-
-
-        /* ================================
-           LOGOUT
-        ================================= */
-
-        .logout {
-            display: inline-block;
-            margin-top: 25px;
-            padding: 11px 20px;
-            background: #dc3545;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-        }
-
-
-        .logout:hover {
-            background: #bb2d3b;
-        }
-        
-
-        /* ================================
-   TEACHER MODULES
-================================= */
-
-.modules {
-    margin-top: 25px;
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-}
-
-.modules h2 {
-    margin-bottom: 18px;
-}
-
-.module-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-}
-
-.module-card {
-    display: block;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 10px;
-    text-decoration: none;
-    color: #222;
-    border: 1px solid #eee;
-    transition: 0.2s;
-}
-
-.module-card:hover {
-    background: #e7f1ff;
-    border-color: #007bff;
-}
-
-.module-card h3 {
-    margin-bottom: 8px;
-    color: #007bff;
-}
-
-.module-card p {
-    font-size: 13px;
-    color: #777;
-}
-
-        /* ================================
-           MOBILE
-        ================================= */
-
-        @media(max-width: 700px) {
-
-            .details {
-                grid-template-columns: 1fr;
-            }
-
-
-            .profile-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .module-grid {
-    grid-template-columns: 1fr;
-}
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-
-<div class="container">
-
-
-    <!-- =====================================
-         WELCOME
-    ====================================== -->
-
-    <div class="welcome">
-
-        <h1>
-
+?>
+
+<?php
+$UI_ROOT         = '';
+$UI_ACTIVE       = 'dashboard';
+$UI_TITLE        = 'Teacher Dashboard';
+$UI_CRUMBS       = [];
+$UI_PROFILE_NAME = $user["name"] ?? "Teacher";
+include __DIR__ . '/includes/header.php';
+?>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h1 class="h3 mb-1">
             Welcome,
-
-            <span>
-
-                <?= htmlspecialchars(
-                    $user["username"]
-                ) ?>
-
-            </span>
-
+            <span class="text-primary"><?= htmlspecialchars($user["username"]) ?></span>
         </h1>
-
-
-        <p>
-
-            Welcome to your Teacher Dashboard.
-
-        </p>
-
+        <p class="text-body-secondary mb-0">Welcome to your Teacher Dashboard.</p>
     </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <strong>Profile</strong>
+    </div>
+    <div class="card-body">
 
 
 
@@ -582,21 +286,20 @@ $role_name = $user["role_name"];
          PROFILE
     ====================================== -->
 
-    <div class="profile-card">
-
 
         <!-- PROFILE HEADER -->
 
-        <div class="profile-header">
+        <div class="d-flex align-items-center gap-3 flex-wrap pb-3 mb-4 border-bottom">
 
 
             <!-- PROFILE PHOTO -->
 
-            <div class="profile-photo">
+            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0" style="width:90px;height:90px;font-size:35px;font-weight:bold;">
 
                 <?php if (!empty($user["profile_photo"])): ?>
 
                     <img
+                        style="width:100%;height:100%;object-fit:cover;"
                         src="<?= htmlspecialchars(
                             $user["profile_photo"]
                         ) ?>"
@@ -634,7 +337,7 @@ $role_name = $user["role_name"];
                 </p>
 
 
-                <span class="role-badge">
+                <span class="badge bg-primary text-white">
 
                     <?= htmlspecialchars(
                         $role_name
@@ -652,16 +355,16 @@ $role_name = $user["role_name"];
              DETAILS
         ====================================== -->
 
-        <div class="details">
+        <div class="row g-3">
 
 
             <!-- USERNAME -->
 
-            <div class="detail">
+            <div class="col-md-6 border rounded p-3 bg-light">
 
-                <label>
+                <div class="text-muted small mb-1">
                     Username
-                </label>
+                </div>
 
                 <strong>
 
@@ -677,11 +380,11 @@ $role_name = $user["role_name"];
 
             <!-- FULL NAME -->
 
-            <div class="detail">
+            <div class="col-md-6 border rounded p-3 bg-light">
 
-                <label>
+                <div class="text-muted small mb-1">
                     Full Name
-                </label>
+                </div>
 
                 <strong>
 
@@ -697,11 +400,11 @@ $role_name = $user["role_name"];
 
             <!-- SCHOOL -->
 
-            <div class="detail">
+            <div class="col-md-6 border rounded p-3 bg-light">
 
-                <label>
+                <div class="text-muted small mb-1">
                     School
-                </label>
+                </div>
 
                 <strong>
 
@@ -717,11 +420,11 @@ $role_name = $user["role_name"];
 
             <!-- EMAIL -->
 
-            <div class="detail">
+            <div class="col-md-6 border rounded p-3 bg-light">
 
-                <label>
+                <div class="text-muted small mb-1">
                     Email
-                </label>
+                </div>
 
                 <strong>
 
@@ -737,11 +440,11 @@ $role_name = $user["role_name"];
 
             <!-- MOBILE -->
 
-            <div class="detail">
+            <div class="col-md-6 border rounded p-3 bg-light">
 
-                <label>
+                <div class="text-muted small mb-1">
                     Mobile
-                </label>
+                </div>
 
                 <strong>
 
@@ -757,11 +460,11 @@ $role_name = $user["role_name"];
 
             <!-- USER TYPE -->
 
-            <div class="detail">
+            <div class="col-md-6 border rounded p-3 bg-light">
 
-                <label>
+                <div class="text-muted small mb-1">
                     User Type
-                </label>
+                </div>
 
                 <strong>
 
@@ -777,11 +480,11 @@ $role_name = $user["role_name"];
 
             <!-- ROLE UID -->
 
-            <div class="detail">
+            <div class="col-md-6 border rounded p-3 bg-light">
 
-                <label>
+                <div class="text-muted small mb-1">
                     Role UID
-                </label>
+                </div>
 
                 <strong>
 
@@ -797,11 +500,11 @@ $role_name = $user["role_name"];
 
             <!-- ROLE NAME -->
 
-            <div class="detail">
+            <div class="col-md-6 border rounded p-3 bg-light">
 
-                <label>
+                <div class="text-muted small mb-1">
                     Role Name
-                </label>
+                </div>
 
                 <strong>
 
@@ -817,11 +520,11 @@ $role_name = $user["role_name"];
 
             <!-- ROLE DESCRIPTION -->
 
-            <div class="detail">
+            <div class="col-md-6 border rounded p-3 bg-light">
 
-                <label>
+                <div class="text-muted small mb-1">
                     Role Description
-                </label>
+                </div>
 
                 <strong>
 
@@ -837,11 +540,11 @@ $role_name = $user["role_name"];
 
             <!-- SYSTEM ROLE -->
 
-            <div class="detail">
+            <div class="col-md-6 border rounded p-3 bg-light">
 
-                <label>
+                <div class="text-muted small mb-1">
                     System Role
-                </label>
+                </div>
 
                 <strong>
 
@@ -858,13 +561,13 @@ $role_name = $user["role_name"];
 
             <!-- ACCOUNT STATUS -->
 
-            <div class="detail">
+            <div class="col-md-6 border rounded p-3 bg-light">
 
-                <label>
+                <div class="text-muted small mb-1">
                     Account Status
-                </label>
+                </div>
 
-                <strong class="status">
+                <strong class="text-success">
 
                     <?= htmlspecialchars(
                         $user["status"]
@@ -878,13 +581,13 @@ $role_name = $user["role_name"];
 
             <!-- ROLE STATUS -->
 
-            <div class="detail">
+            <div class="col-md-6 border rounded p-3 bg-light">
 
-                <label>
+                <div class="text-muted small mb-1">
                     Role Status
-                </label>
+                </div>
 
-                <strong class="status">
+                <strong class="text-success">
 
                     <?= htmlspecialchars(
                         $user["role_status"]
@@ -898,11 +601,11 @@ $role_name = $user["role_name"];
 
             <!-- ACCOUNT CREATED -->
 
-            <div class="detail">
+            <div class="col-md-6 border rounded p-3 bg-light">
 
-                <label>
+                <div class="text-muted small mb-1">
                     Account Created
-                </label>
+                </div>
 
                 <strong>
 
@@ -918,11 +621,11 @@ $role_name = $user["role_name"];
 
             <!-- ROLE CREATED -->
 
-            <div class="detail">
+            <div class="col-md-6 border rounded p-3 bg-light">
 
-                <label>
+                <div class="text-muted small mb-1">
                     Role Created
-                </label>
+                </div>
 
                 <strong>
 
@@ -939,173 +642,9 @@ $role_name = $user["role_name"];
 
 
 
-        <!-- =====================================
-     TEACHER MODULES
-====================================== -->
-
-<div class="modules">
-
-    <h2>Teacher Modules</h2>
-
-    <div class="module-grid">
-
-        <!-- ATTENDANCE -->
-
-        <a
-            href="attendance/index.php"
-            class="module-card"
-        >
-
-            <h3>Attendance</h3>
-
-            <p>
-                Take and manage student attendance.
-            </p>
-
-        </a>
-
-
-        <!-- MY CLASSES -->
-
-        <a
-            href="classes/index.php"
-            class="module-card"
-        >
-
-            <h3>My Classes</h3>
-
-            <p>
-                View your assigned classes.
-            </p>
-
-        </a>
-
-
-        <!-- MY STUDENTS -->
-
-        <a
-            href="students/index.php"
-            class="module-card"
-        >
-
-            <h3>My Students</h3>
-
-            <p>
-                View students assigned to you.
-            </p>
-
-        </a>
-
-
-        <!-- HOMEWORK -->
-
-        <a
-            href="homework/index.php"
-            class="module-card"
-        >
-
-            <h3>Homework</h3>
-
-            <p>
-                Create and manage homework.
-            </p>
-
-        </a>
-
-
-        <!-- MARKS -->
-
-        <a
-            href="marks/index.php"
-            class="module-card"
-        >
-
-            <h3>Marks Entry</h3>
-
-            <p>
-                Enter and manage student marks.
-            </p>
-
-        </a>
-
-
-        <!-- EXAMS -->
-
-        <a
-            href="exams/index.php"
-            class="module-card"
-        >
-
-            <h3>Exams</h3>
-
-            <p>
-                View examination information.
-            </p>
-
-        </a>
-
-
-        <!-- TIMETABLE -->
-
-        <a
-            href="timetable/index.php"
-            class="module-card"
-        >
-
-            <h3>Timetable</h3>
-
-            <p>
-                View your class timetable.
-            </p>
-
-        </a>
-
-
-        <!-- NOTICES -->
-
-        <a
-            href="notices/index.php"
-            class="module-card"
-        >
-
-            <h3>Notices</h3>
-
-            <p>
-                View school and class notices.
-            </p>
-
-        </a>
-
-
-        <!-- PROFILE -->
-
-        <a
-            href="profile/index.php"
-            class="module-card"
-        >
-
-            <h3>Profile</h3>
-
-            <p>
-                Manage your teacher profile.
-            </p>
-
-        </a>
-
-    </div>
-
-</div>
-
-
-
         <!-- LOGOUT -->
 
-        <a
-            href="../logout.php"
-            class="logout"
-        >
-            Logout
-        </a>
+        <a href="../logout.php" class="btn btn-danger mt-4">Logout</a>
 
 
     </div>
@@ -1113,7 +652,4 @@ $role_name = $user["role_name"];
 
 </div>
 
-
-</body>
-
-</html>
+<?php include __DIR__ . '/includes/footer.php'; ?>

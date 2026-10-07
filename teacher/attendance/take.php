@@ -394,153 +394,60 @@ while ($row = $result->fetch_assoc()) {
 
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'attendance';
+$UI_TITLE        = 'Take Student Attendance';
+$UI_CRUMBS       = [
+    ['label' => 'Attendance', 'url' => 'index.php'],
+];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
-<head>
+<div class="card mb-4">
+    <div class="card-header">
+        <strong>Take Student Attendance</strong>
+    </div>
+    <div class="card-body">
 
-<meta charset="UTF-8">
+        <div class="row g-3 mb-3">
+            <div class="col-md-3">
+                <div class="border rounded p-3 h-100">
+                    <div class="text-body-secondary">Teacher</div>
+                    <strong><?= htmlspecialchars($teacher_name) ?></strong>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="border rounded p-3 h-100">
+                    <div class="text-body-secondary">Class</div>
+                    <strong><?= htmlspecialchars($class_uid) ?></strong>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="border rounded p-3 h-100">
+                    <div class="text-body-secondary">Section</div>
+                    <strong><?= htmlspecialchars($section_uid) ?></strong>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="border rounded p-3 h-100">
+                    <div class="text-body-secondary">Subject</div>
+                    <strong><?= htmlspecialchars($assignment["subject_uid"]) ?></strong>
+                </div>
+            </div>
+        </div>
 
-<title>Take Student Attendance</title>
-
-<style>
-
-body {
-    font-family: Arial, sans-serif;
-    background: #f5f6fa;
-    margin: 0;
-    padding: 30px;
-}
-
-.container {
-    max-width: 1100px;
-    margin: auto;
-}
-
-.card {
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,.08);
-}
-
-.info {
-    margin: 6px 0;
-}
-
-.success {
-    background: #d4edda;
-    color: #155724;
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-}
-
-.error {
-    background: #f8d7da;
-    color: #721c24;
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-}
-
-input,
-select,
-textarea {
-    padding: 8px;
-    box-sizing: border-box;
-}
-
-input[type="date"] {
-    margin-bottom: 20px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th,
-td {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    text-align: left;
-}
-
-th {
-    background: #f1f1f1;
-}
-
-select {
-    width: 130px;
-}
-
-textarea {
-    width: 180px;
-    height: 35px;
-}
-
-button {
-    margin-top: 20px;
-    padding: 12px 25px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.btn {
-    display: inline-block;
-    padding: 10px 18px;
-    background: #6c757d;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    margin-top: 15px;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="container">
-
-<div class="card">
-
-<h2>Take Student Attendance</h2>
-
-<div class="info">
-Teacher:
-<strong><?= htmlspecialchars($teacher_name) ?></strong>
-</div>
-
-<div class="info">
-Class:
-<strong><?= htmlspecialchars($class_uid) ?></strong>
-</div>
-
-<div class="info">
-Section:
-<strong><?= htmlspecialchars($section_uid) ?></strong>
-</div>
-
-<div class="info">
-Subject:
-<strong><?= htmlspecialchars($assignment["subject_uid"]) ?></strong>
-</div>
-
+    </div>
 </div>
 
 
-<div class="card">
+<div class="card mb-4">
+    <div class="card-body">
 
 <?php if ($message): ?>
 
-<div class="success">
+<div class="alert alert-success" role="alert">
 <?= htmlspecialchars($message) ?>
 </div>
 
@@ -549,7 +456,7 @@ Subject:
 
 <?php if ($error): ?>
 
-<div class="error">
+<div class="alert alert-danger" role="alert">
 <?= htmlspecialchars($error) ?>
 </div>
 
@@ -567,13 +474,14 @@ Subject:
 >
 
 
-<label>
+<div class="mb-3 col-md-4">
+<label class="form-label" for="attendance_date">
 <strong>Attendance Date</strong>
 </label>
 
-<br>
-
 <input
+    class="form-control"
+    id="attendance_date"
     type="date"
     name="attendance_date"
     value="<?= htmlspecialchars($attendance_date) ?>"
@@ -583,11 +491,12 @@ Subject:
 
 <?php if (empty($students)): ?>
 
-<p>No students found for this class and section.</p>
+<div class="alert alert-warning mb-0" role="alert">No students found for this class and section.</div>
 
 <?php else: ?>
 
-<table>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle">
 
 <thead>
 
@@ -637,7 +546,7 @@ $current_remarks =
 
 <td>
 
-<select name="status[<?= htmlspecialchars($student_uid) ?>]">
+<select class="form-select" name="status[<?= htmlspecialchars($student_uid) ?>]">
 
 <option
     value="present"
@@ -667,6 +576,8 @@ Late
 <td>
 
 <textarea
+    class="form-control"
+    rows="1"
     name="remarks[<?= htmlspecialchars($student_uid) ?>]"
 ><?= htmlspecialchars($current_remarks) ?></textarea>
 
@@ -679,8 +590,9 @@ Late
 </tbody>
 
 </table>
+</div>
 
-<button type="submit">
+<button class="btn btn-primary mt-3" type="submit">
 Save Attendance
 </button>
 
@@ -688,16 +600,15 @@ Save Attendance
 
 </form>
 
-<br>
+<div class="mt-3">
 
-<a class="btn" href="index.php">
+<a class="btn btn-secondary" href="index.php">
 ← Back
 </a>
 
 </div>
 
 </div>
+</div>
 
-</body>
-
-</html>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
