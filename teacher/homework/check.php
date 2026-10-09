@@ -18,6 +18,7 @@ csrfVerify();
 $user_uid = $_SESSION["user_uid"] ?? "";
 
 $teacher_uid = "";
+$teacher_name = "";
 
 $sql_teacher = "
     SELECT teacher_uid, teacher_name
@@ -41,6 +42,7 @@ $result_teacher = $stmt_teacher->get_result();
 if ($result_teacher->num_rows > 0) {
     $teacher = $result_teacher->fetch_assoc();
     $teacher_uid = $teacher["teacher_uid"];
+    $teacher_name = $teacher["teacher_name"] ?? "";
 }
 
 $stmt_teacher->close();
@@ -305,221 +307,62 @@ if (
 }
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'homework';
+$UI_TITLE        = 'Check Submission';
+$UI_CRUMBS       = [['label' => 'Homework', 'url' => 'index.php']];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check Submission</title>
+<?php
+$sub_badge = "bg-warning text-dark";
 
-    <style>
+if ($sub_state === "submitted") {
+    $sub_badge = "bg-info text-dark";
+} elseif ($sub_state === "checked") {
+    $sub_badge = "bg-success";
+}
+?>
 
-        * { box-sizing: border-box; }
+<a
+    class="btn btn-outline-secondary btn-sm mb-3"
+    href="submissions.php?hw=<?php echo urlencode($homework_uid); ?>"
+>
+    &larr; Back to Submissions
+</a>
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            color: #1f2937;
-        }
+<?php if ($message !== ""): ?>
+    <div class="alert alert-success" role="alert">
+        <?php echo htmlspecialchars($message); ?>
+    </div>
+<?php endif; ?>
 
-        .header {
-            background: #ffffff;
-            padding: 20px 25px;
-            border-bottom: 1px solid #e5e7eb;
-        }
+<?php if ($error !== ""): ?>
+    <div class="alert alert-danger" role="alert">
+        <?php echo htmlspecialchars($error); ?>
+    </div>
+<?php endif; ?>
 
-        .header h1 { margin: 0; font-size: 26px; }
+<div class="card mb-4">
+    <div class="card-header"><strong>View / Check Submission</strong></div>
+    <div class="card-body">
 
-        .container { padding: 25px; }
-
-        .back {
-            display: inline-block;
-            margin-bottom: 20px;
-            text-decoration: none;
-            color: #2563eb;
-            font-weight: 600;
-        }
-
-        .card {
-            background: #ffffff;
-            padding: 26px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .card h2 { margin: 0 0 16px; }
-        .card h3 { margin: 0 0 12px; font-size: 17px; color: #374151; }
-
-        .info-line {
-            color: #6b7280;
-            font-size: 14px;
-            margin: 6px 0;
-        }
-
-        .info-line strong { color: #111827; }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 11px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-            vertical-align: middle;
-        }
-
-        .badge.pending { background: #fef3c7; color: #b45309; }
-        .badge.submitted { background: #dbeafe; color: #1d4ed8; }
-        .badge.checked { background: #dcfce7; color: #15803d; }
-        .badge.late { background: #fee2e2; color: #b91c1c; }
-
-        .banner {
-            background: #dcfce7;
-            color: #15803d;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 18px;
-            font-weight: 600;
-        }
-
-        .error-box {
-            background: #fee2e2;
-            color: #b91c1c;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 18px;
-            font-weight: 600;
-        }
-
-        .submission-box {
-            background: #f8f9fa;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 16px;
-            white-space: pre-wrap;
-            line-height: 1.6;
-            color: #374151;
-            margin-bottom: 16px;
-        }
-
-        .form-group { margin-bottom: 16px; }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 11px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: Arial, sans-serif;
-            outline: none;
-            background: #ffffff;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus { border-color: #2563eb; }
-
-        .form-group textarea { min-height: 110px; resize: vertical; }
-
-        .row2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background: #2563eb;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .btn:hover { background: #1d4ed8; }
-
-        .hint { color: #6b7280; font-size: 13px; margin-top: 5px; }
-
-        .marks-line {
-            font-size: 15px;
-            margin: 8px 0;
-            color: #374151;
-        }
-
-        .marks-line strong { color: #111827; }
-
-    </style>
-
-</head>
-
-<body>
-
-<div class="header">
-
-    <h1>View / Check Submission</h1>
-
-</div>
-
-<div class="container">
-
-    <a
-        class="back"
-        href="submissions.php?hw=<?php echo urlencode($homework_uid); ?>"
-    >
-        ← Back to Submissions
-    </a>
-
-
-    <?php if ($message !== ""): ?>
-
-        <div class="banner">
-            <?php echo htmlspecialchars($message); ?>
-        </div>
-
-    <?php endif; ?>
-
-
-    <?php if ($error !== ""): ?>
-
-        <div class="error-box">
-            <?php echo htmlspecialchars($error); ?>
-        </div>
-
-    <?php endif; ?>
-
-
-    <div class="card">
-
-        <h2>
-            <?php echo htmlspecialchars($student["student_name"]); ?>
-
-            <span class="badge <?php echo $sub_state; ?>" style="margin-left:10px;">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+            <h5 class="mb-0">
+                <?php echo htmlspecialchars($student["student_name"]); ?>
+            </h5>
+            <span class="badge <?php echo $sub_badge; ?>">
                 <?php echo ucfirst($sub_state); ?>
             </span>
-
             <?php if ($is_late): ?>
-
-                <span class="badge late" style="margin-left:6px;">Late</span>
-
+                <span class="badge bg-danger">Late</span>
             <?php endif; ?>
+        </div>
 
-        </h2>
-
-        <p class="info-line">
+        <p class="text-body-secondary mb-1">
             Admission No:
             <strong><?php echo htmlspecialchars($student["admission_no"]); ?></strong>
             &nbsp;|&nbsp;
@@ -527,12 +370,12 @@ if (
             <strong><?php echo htmlspecialchars($student["roll_no"] ?? "-"); ?></strong>
         </p>
 
-        <p class="info-line">
+        <p class="text-body-secondary mb-1">
             Homework:
             <strong><?php echo htmlspecialchars($homework["title"]); ?></strong>
         </p>
 
-        <p class="info-line">
+        <p class="text-body-secondary mb-0">
             Due:
             <strong><?php echo date("d M Y", strtotime($homework["due_date"])); ?></strong>
             &nbsp;|&nbsp;
@@ -543,15 +386,15 @@ if (
         </p>
 
     </div>
+</div>
 
+<?php if ($sub_state === "pending"): ?>
 
-    <?php if ($sub_state === "pending"): ?>
+    <div class="card mb-4">
+        <div class="card-header"><strong>Submission Not Received Yet</strong></div>
+        <div class="card-body">
 
-        <div class="card">
-
-            <h3>Submission Not Received Yet</h3>
-
-            <p class="info-line">
+            <p class="text-body-secondary">
                 Record the submission received from this student.
             </p>
 
@@ -561,89 +404,92 @@ if (
 
                 <input type="hidden" name="action" value="receive">
 
-                <div class="form-group">
-
-                    <label>Submission Text *</label>
-
+                <div class="mb-3">
+                    <label class="form-label" for="submissionText">Submission Text *</label>
                     <textarea
+                        class="form-control"
+                        id="submissionText"
                         name="submission_text"
+                        rows="5"
                         placeholder="Enter the homework solution / submission..."
                         required
                     ><?php echo htmlspecialchars($submission["submission_text"] ?? ""); ?></textarea>
-
                 </div>
 
-                <div class="form-group" style="max-width:300px;">
-
-                    <label>Submitted Date *</label>
-
+                <div class="mb-3" style="max-width: 300px;">
+                    <label class="form-label" for="submittedDate">Submitted Date *</label>
                     <input
                         type="date"
+                        class="form-control"
+                        id="submittedDate"
                         name="submitted_date"
                         value="<?php echo date("Y-m-d"); ?>"
                         required
                     >
-
                 </div>
 
-                <button class="btn" type="submit">
+                <button class="btn btn-primary" type="submit">
                     Mark Received
                 </button>
 
             </form>
 
         </div>
+    </div>
 
-    <?php else: ?>
+<?php else: ?>
+    <div class="card mb-4">
+        <div class="card-header"><strong>Submission</strong></div>
+        <div class="card-body">
 
-        <div class="card">
-
-            <h3>Submission</h3>
-
-            <p class="info-line">
+            <p class="text-body-secondary">
                 Submitted On:
                 <strong>
                     <?php echo date("d M Y", strtotime($submission["submitted_date"])); ?>
                 </strong>
             </p>
 
-            <div class="submission-box"><?php echo htmlspecialchars($submission["submission_text"] ?? "-"); ?></div>
+            <div class="border rounded p-3 bg-light mb-3" style="white-space: pre-wrap;">
+                <?php echo htmlspecialchars($submission["submission_text"] ?? "-"); ?>
+            </div>
 
             <?php if ($sub_state === "checked"): ?>
 
-                <p class="marks-line">
-                    Marks:
-                    <strong>
-                        <?php echo htmlspecialchars(rtrim(rtrim((string) ($submission["marks"] ?? "0"), "0"), ".")); ?>
-                        /
-                        <?php echo htmlspecialchars(rtrim(rtrim((string) $homework["max_marks"], "0"), ".")); ?>
-                    </strong>
-                </p>
-
-                <p class="marks-line">
-                    Feedback:
-                    <strong>
-                        <?php echo htmlspecialchars(trim($submission["feedback"] ?? "") !== "" ? $submission["feedback"] : "-"); ?>
-                    </strong>
-                </p>
-
-                <p class="marks-line">
-                    Checked At:
-                    <strong>
-                        <?php echo !empty($submission["checked_at"]) ? date("d M Y h:i A", strtotime($submission["checked_at"])) : "-"; ?>
-                    </strong>
-                </p>
+                <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                        <div class="text-body-secondary small">Marks</div>
+                        <strong>
+                            <?php echo htmlspecialchars(rtrim(rtrim((string) ($submission["marks"] ?? "0"), "0"), ".")); ?>
+                            /
+                            <?php echo htmlspecialchars(rtrim(rtrim((string) $homework["max_marks"], "0"), ".")); ?>
+                        </strong>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="text-body-secondary small">Feedback</div>
+                        <strong>
+                            <?php echo htmlspecialchars(trim($submission["feedback"] ?? "") !== "" ? $submission["feedback"] : "-"); ?>
+                        </strong>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="text-body-secondary small">Checked At</div>
+                        <strong>
+                            <?php echo !empty($submission["checked_at"]) ? date("d M Y h:i A", strtotime($submission["checked_at"])) : "-"; ?>
+                        </strong>
+                    </div>
+                </div>
 
             <?php endif; ?>
 
         </div>
+    </div>
 
-
-        <div class="card">
-
-            <h3>
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>
                 <?php echo $sub_state === "checked" ? "Update Check" : "Check Submission"; ?>
-            </h3>
+            </strong>
+        </div>
+        <div class="card-body">
 
             <form method="POST">
 
@@ -651,57 +497,46 @@ if (
 
                 <input type="hidden" name="action" value="check">
 
-                <div class="row2">
-
-                    <div class="form-group">
-
-                        <label>
-                            Marks (0 -
-                            <?php echo htmlspecialchars(rtrim(rtrim((string) $homework["max_marks"], "0"), ".")); ?>
-                            ) *
-                        </label>
-
-                        <input
-                            type="number"
-                            name="marks"
-                            min="0"
-                            max="<?php echo htmlspecialchars($homework['max_marks'], ENT_QUOTES); ?>"
-                            step="0.5"
-                            value="<?php echo $sub_state === 'checked' && isset($submission['marks']) ? htmlspecialchars(rtrim(rtrim((string) $submission['marks'], '0'), '.')) : ''; ?>"
-                            required
-                        >
-
-                    </div>
-
+                <div class="mb-3" style="max-width: 300px;">
+                    <label class="form-label" for="marksInput">
+                        Marks (0 -
+                        <?php echo htmlspecialchars(rtrim(rtrim((string) $homework["max_marks"], "0"), ".")); ?>
+                        ) *
+                    </label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        id="marksInput"
+                        name="marks"
+                        min="0"
+                        max="<?php echo htmlspecialchars($homework['max_marks'], ENT_QUOTES); ?>"
+                        step="0.5"
+                        value="<?php echo $sub_state === 'checked' && isset($submission['marks']) ? htmlspecialchars(rtrim(rtrim((string) $submission['marks'], '0'), '.')) : ''; ?>"
+                        required
+                    >
                 </div>
 
-                <div class="form-group">
-
-                    <label>Feedback</label>
-
+                <div class="mb-3">
+                    <label class="form-label" for="feedbackInput">Feedback</label>
                     <textarea
+                        class="form-control"
+                        id="feedbackInput"
                         name="feedback"
+                        rows="4"
                         placeholder="Write feedback for the student..."
                     ><?php echo htmlspecialchars($submission["feedback"] ?? ""); ?></textarea>
-
                 </div>
 
-                <button class="btn" type="submit">
+                <button class="btn btn-primary" type="submit">
                     <?php echo $sub_state === "checked" ? "Update Check" : "Save Check"; ?>
                 </button>
 
             </form>
 
         </div>
+    </div>
 
-    <?php endif; ?>
+<?php endif; ?>
 
-</div>
-
-</body>
-
-</html>
-
-
-
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 

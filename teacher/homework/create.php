@@ -258,161 +258,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'homework';
+$UI_TITLE        = 'Create Homework';
+$UI_CRUMBS       = [['label' => 'Homework', 'url' => 'index.php']];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Homework</title>
+<a class="btn btn-outline-secondary btn-sm mb-3" href="index.php">
+    &larr; Back to Homework
+</a>
 
-    <style>
+<?php if ($error !== ""): ?>
+    <div class="alert alert-danger" role="alert">
+        <?php echo htmlspecialchars($error); ?>
+    </div>
+<?php endif; ?>
 
-        * { box-sizing: border-box; }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            color: #1f2937;
-        }
-
-        .header {
-            background: #ffffff;
-            padding: 20px 25px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .header h1 { margin: 0; font-size: 26px; }
-
-        .container { padding: 25px; }
-
-        .back {
-            display: inline-block;
-            margin-bottom: 20px;
-            text-decoration: none;
-            color: #2563eb;
-            font-weight: 600;
-        }
-
-        .error-box {
-            background: #fee2e2;
-            color: #b91c1c;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 18px;
-            font-weight: 600;
-        }
-
-        .form-card {
-            background: #ffffff;
-            padding: 26px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            max-width: 850px;
-        }
-
-        .form-card h2 { margin: 0 0 20px; }
-
-        .form-group { margin-bottom: 16px; }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 11px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: Arial, sans-serif;
-            outline: none;
-            background: #ffffff;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: #2563eb;
-        }
-
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .row2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background: #2563eb;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .btn:hover { background: #1d4ed8; }
-
-        .btn.secondary { background: #6b7280; }
-        .btn.secondary:hover { background: #4b5563; }
-
-        .hint { color: #6b7280; font-size: 13px; margin-top: 5px; }
-
-        .actions { margin-top: 22px; display: flex; gap: 12px; flex-wrap: wrap; }
-
-    </style>
-
-</head>
-
-<body>
-
-<div class="header">
-
-    <h1>Add Homework</h1>
-
-</div>
-
-<div class="container">
-
-    <a href="index.php" class="back">
-        ← Back to Homework
-    </a>
-
-
-    <?php if ($error !== ""): ?>
-
-        <div class="error-box">
-            <?php echo htmlspecialchars($error); ?>
-        </div>
-
-    <?php endif; ?>
-
-
-    <div class="form-card">
-
-        <h2>Add Homework</h2>
+<div class="card mb-4">
+    <div class="card-header"><strong>Add Homework</strong></div>
+    <div class="card-body">
 
         <?php if (count($assignments) === 0): ?>
 
-            <p class="hint">
+            <div class="alert alert-warning mb-0" role="alert">
                 No class or subject has been assigned to you yet.
-            </p>
+            </div>
 
         <?php else: ?>
 
@@ -420,44 +294,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 <?php echo csrfField(); ?>
 
-                <div class="row2">
-
-                    <div class="form-group">
-
-                        <label>Class *</label>
-
-                        <select id="classSel" required>
-
+                <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                        <label class="form-label" for="classSel">Class *</label>
+                        <select class="form-select" id="classSel" required>
                             <option value="">Select Class</option>
-
                         </select>
-
                     </div>
-
-                    <div class="form-group">
-
-                        <label>Section *</label>
-
-                        <select id="sectionSel" required>
-
+                    <div class="col-12 col-md-4">
+                        <label class="form-label" for="sectionSel">Section *</label>
+                        <select class="form-select" id="sectionSel" required>
                             <option value="">Select Section</option>
-
                         </select>
-
                     </div>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Subject *</label>
-
-                    <select id="subjectSel" required>
-
-                        <option value="">Select Subject</option>
-
-                    </select>
-
+                    <div class="col-12 col-md-4">
+                        <label class="form-label" for="subjectSel">Subject *</label>
+                        <select class="form-select" id="subjectSel" required>
+                            <option value="">Select Subject</option>
+                        </select>
+                    </div>
                 </div>
 
                 <input type="hidden" name="class_uid" id="classUid" value="<?php echo htmlspecialchars($old['class_uid'], ENT_QUOTES); ?>">
@@ -465,92 +320,77 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <input type="hidden" name="subject_uid" id="subjectUid" value="<?php echo htmlspecialchars($old['subject_uid'], ENT_QUOTES); ?>">
                 <input type="hidden" name="academic_year_uid" id="yearUid" value="<?php echo htmlspecialchars($old['academic_year_uid'] ?? '', ENT_QUOTES); ?>">
 
-                <div class="form-group">
-
-                    <label>Title *</label>
-
+                <div class="mt-3">
+                    <label class="form-label" for="hwTitle">Title *</label>
                     <input
                         type="text"
+                        class="form-control"
+                        id="hwTitle"
                         name="title"
                         maxlength="255"
                         placeholder="e.g. Chapter 5 - Algebra Exercises"
                         value="<?php echo htmlspecialchars($old['title'], ENT_QUOTES); ?>"
                         required
                     >
-
                 </div>
-
-                <div class="form-group">
-
-                    <label>Description</label>
-
+                <div class="mt-3">
+                    <label class="form-label" for="hwDescription">Description</label>
                     <textarea
+                        class="form-control"
+                        id="hwDescription"
                         name="description"
+                        rows="4"
                         placeholder="Instructions, questions or details..."
                     ><?php echo htmlspecialchars($old['description']); ?></textarea>
-
                 </div>
 
-                <div class="row2">
-
-                    <div class="form-group">
-
-                        <label>Assigned Date *</label>
-
+                <div class="row g-3 mt-1">
+                    <div class="col-12 col-md-4">
+                        <label class="form-label" for="assignedDate">Assigned Date *</label>
                         <input
                             type="date"
+                            class="form-control"
+                            id="assignedDate"
                             name="assigned_date"
                             value="<?php echo htmlspecialchars($old['assigned_date'], ENT_QUOTES); ?>"
                             required
                         >
-
                     </div>
-
-                    <div class="form-group">
-
-                        <label>Due Date *</label>
-
+                    <div class="col-12 col-md-4">
+                        <label class="form-label" for="dueDate">Due Date *</label>
                         <input
                             type="date"
+                            class="form-control"
+                            id="dueDate"
                             name="due_date"
                             value="<?php echo htmlspecialchars($old['due_date'], ENT_QUOTES); ?>"
                             required
                         >
-
                     </div>
-
+                    <div class="col-12 col-md-4">
+                        <label class="form-label" for="maxMarks">Max Marks *</label>
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="maxMarks"
+                            name="max_marks"
+                            min="1"
+                            max="1000"
+                            step="0.5"
+                            value="<?php echo htmlspecialchars($old['max_marks'], ENT_QUOTES); ?>"
+                            required
+                        >
+                        <div class="form-text">Default is 10. Range: 1 to 1000.</div>
+                    </div>
                 </div>
 
-                <div class="form-group" style="max-width:300px;">
-
-                    <label>Max Marks *</label>
-
-                    <input
-                        type="number"
-                        name="max_marks"
-                        min="1"
-                        max="1000"
-                        step="0.5"
-                        value="<?php echo htmlspecialchars($old['max_marks'], ENT_QUOTES); ?>"
-                        required
-                    >
-
-                    <p class="hint">
-                        Default is 10. Range: 1 to 1000.
-                    </p>
-
-                </div>
-
-                <div class="actions">
-
-                    <button class="btn" type="submit">
+                <div class="mt-4 d-flex flex-wrap gap-2">
+                    <button class="btn btn-primary" type="submit">
                         Save Homework
                     </button>
-
-                    <a class="btn secondary" href="index.php">
+                    <a class="btn btn-outline-secondary" href="index.php">
                         Cancel
                     </a>
-
                 </div>
 
             </form>
@@ -558,7 +398,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <?php endif; ?>
 
     </div>
-
 </div>
 
 <script>
@@ -701,10 +540,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 </script>
 
-</body>
-
-</html>
-
-
-
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 

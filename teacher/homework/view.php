@@ -192,339 +192,184 @@ function homeworkStateLabelDefined($state)
 }
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'homework';
+$UI_TITLE        = 'Homework Details';
+$UI_CRUMBS       = [['label' => 'Homework', 'url' => 'index.php']];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework Details</title>
+<?php
+$state_badge = "bg-secondary";
 
-    <style>
+if ($state === "open") {
+    $state_badge = "bg-success";
+} elseif ($state === "inactive") {
+    $state_badge = "bg-danger";
+}
+?>
 
-        * { box-sizing: border-box; }
+<a class="btn btn-outline-secondary btn-sm mb-3" href="index.php">
+    &larr; Back to Homework
+</a>
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            color: #1f2937;
-        }
+<div class="card mb-4">
+    <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <strong>Homework Details</strong>
+        <span class="d-flex flex-wrap gap-2">
+            <span class="badge <?php echo $state_badge; ?>">
+                <?php echo homeworkStateLabelDefined($state); ?>
+            </span>
+            <span class="badge bg-light text-dark border">
+                <?php echo htmlspecialchars($homework["subject_name"]); ?>
+            </span>
+        </span>
+    </div>
+    <div class="card-body">
 
-        .header {
-            background: #ffffff;
-            padding: 20px 25px;
-            border-bottom: 1px solid #e5e7eb;
-        }
+        <h4 class="mb-3">
+            <?php echo htmlspecialchars($homework["title"]); ?>
+        </h4>
 
-        .header h1 { margin: 0; font-size: 26px; }
-
-        .container { padding: 25px; }
-
-        .back {
-            display: inline-block;
-            margin-bottom: 20px;
-            text-decoration: none;
-            color: #2563eb;
-            font-weight: 600;
-        }
-
-        .card {
-            background: #ffffff;
-            padding: 26px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .hw-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .hw-head h2 { margin: 0; }
-
-        .badges { display: flex; gap: 8px; flex-wrap: wrap; }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 11px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .badge.open { background: #dcfce7; color: #15803d; }
-        .badge.closed { background: #e5e7eb; color: #4b5563; }
-        .badge.inactive { background: #fee2e2; color: #b91c1c; }
-        .badge.subject { background: #e7f1ff; color: #2563eb; }
-
-        .details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-top: 20px;
-        }
-
-        .detail {
-            background: #f8f9fa;
-            padding: 13px 15px;
-            border-radius: 8px;
-        }
-
-        .detail label {
-            display: block;
-            font-size: 12px;
-            color: #6b7280;
-            margin-bottom: 5px;
-        }
-
-        .detail strong { font-size: 15px; color: #111827; word-break: break-word; }
-
-        .desc {
-            margin-top: 20px;
-            padding: 16px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            white-space: pre-wrap;
-            color: #374151;
-            line-height: 1.6;
-        }
-
-        .desc-title {
-            margin: 22px 0 8px;
-            font-size: 15px;
-            color: #374151;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-        }
-
-        .stat {
-            background: #f8f9fa;
-            padding: 16px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .stat label { color: #6b7280; font-size: 13px; }
-        .stat .num { font-size: 24px; font-weight: bold; margin-top: 6px; }
-
-        .progress-wrap { margin-top: 18px; }
-
-        .progress-wrap label { font-size: 13px; color: #6b7280; }
-
-        .progress {
-            background: #e5e7eb;
-            border-radius: 8px;
-            height: 12px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-
-        .progress span {
-            display: block;
-            height: 100%;
-            background: #2563eb;
-        }
-
-        .actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 22px;
-            background: #2563eb;
-            color: #ffffff;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .btn:hover { background: #1d4ed8; }
-
-        .btn.gray { background: #6b7280; }
-        .btn.gray:hover { background: #4b5563; }
-
-    </style>
-
-</head>
-
-<body>
-
-<div class="header">
-
-    <h1>Homework Details</h1>
-
-</div>
-
-<div class="container">
-
-    <a href="index.php" class="back">
-        ← Back to Homework
-    </a>
-
-
-    <div class="card">
-
-        <div class="hw-head">
-
-            <h2>
-                <?php echo htmlspecialchars($homework["title"]); ?>
-            </h2>
-
-            <div class="badges">
-
-                <span class="badge <?php echo $state; ?>">
-                    <?php echo homeworkStateLabelDefined($state); ?>
-                </span>
-
-                <span class="badge subject">
-                    <?php echo htmlspecialchars($homework["subject_name"]); ?>
-                </span>
-
+        <div class="row g-3">
+            <div class="col-6 col-md-4 col-xl-3">
+                <div class="border rounded p-3 bg-light h-100">
+                    <div class="text-body-secondary small mb-1">Class</div>
+                    <strong><?php echo htmlspecialchars($homework["class_name"]); ?></strong>
+                </div>
             </div>
-
-        </div>
-
-        <div class="details">
-
-            <div class="detail">
-                <label>Class</label>
-                <strong><?php echo htmlspecialchars($homework["class_name"]); ?></strong>
+            <div class="col-6 col-md-4 col-xl-3">
+                <div class="border rounded p-3 bg-light h-100">
+                    <div class="text-body-secondary small mb-1">Section</div>
+                    <strong><?php echo htmlspecialchars($homework["section_name"]); ?></strong>
+                </div>
             </div>
-
-            <div class="detail">
-                <label>Section</label>
-                <strong><?php echo htmlspecialchars($homework["section_name"]); ?></strong>
+            <div class="col-6 col-md-4 col-xl-3">
+                <div class="border rounded p-3 bg-light h-100">
+                    <div class="text-body-secondary small mb-1">Subject</div>
+                    <strong><?php echo htmlspecialchars($homework["subject_name"]); ?></strong>
+                </div>
             </div>
-
-            <div class="detail">
-                <label>Subject</label>
-                <strong><?php echo htmlspecialchars($homework["subject_name"]); ?></strong>
+            <div class="col-6 col-md-4 col-xl-3">
+                <div class="border rounded p-3 bg-light h-100">
+                    <div class="text-body-secondary small mb-1">Academic Year</div>
+                    <strong><?php echo htmlspecialchars($homework["year_name"]); ?></strong>
+                </div>
             </div>
-
-            <div class="detail">
-                <label>Academic Year</label>
-                <strong><?php echo htmlspecialchars($homework["year_name"]); ?></strong>
+            <div class="col-6 col-md-4 col-xl-3">
+                <div class="border rounded p-3 bg-light h-100">
+                    <div class="text-body-secondary small mb-1">Assigned Date</div>
+                    <strong><?php echo date("d M Y", strtotime($homework["assigned_date"])); ?></strong>
+                </div>
             </div>
-
-            <div class="detail">
-                <label>Assigned Date</label>
-                <strong><?php echo date("d M Y", strtotime($homework["assigned_date"])); ?></strong>
+            <div class="col-6 col-md-4 col-xl-3">
+                <div class="border rounded p-3 bg-light h-100">
+                    <div class="text-body-secondary small mb-1">Due Date</div>
+                    <strong><?php echo date("d M Y", strtotime($homework["due_date"])); ?></strong>
+                </div>
             </div>
-
-            <div class="detail">
-                <label>Due Date</label>
-                <strong><?php echo date("d M Y", strtotime($homework["due_date"])); ?></strong>
+            <div class="col-6 col-md-4 col-xl-3">
+                <div class="border rounded p-3 bg-light h-100">
+                    <div class="text-body-secondary small mb-1">Max Marks</div>
+                    <strong><?php echo htmlspecialchars(rtrim(rtrim((string) $homework["max_marks"], "0"), ".")); ?></strong>
+                </div>
             </div>
-
-            <div class="detail">
-                <label>Max Marks</label>
-                <strong><?php echo htmlspecialchars(rtrim(rtrim((string) $homework["max_marks"], "0"), ".")); ?></strong>
+            <div class="col-6 col-md-4 col-xl-3">
+                <div class="border rounded p-3 bg-light h-100">
+                    <div class="text-body-secondary small mb-1">Total Students</div>
+                    <strong><?php echo $total_students; ?></strong>
+                </div>
             </div>
-
-            <div class="detail">
-                <label>Total Students</label>
-                <strong><?php echo $total_students; ?></strong>
-            </div>
-
         </div>
 
         <?php if (trim($homework["description"] ?? "") !== ""): ?>
 
-            <p class="desc-title">Description</p>
-
-            <div class="desc">
+            <div class="text-body-secondary small mt-4 mb-1">Description</div>
+            <div class="border rounded p-3 bg-light" style="white-space: pre-wrap;">
                 <?php echo htmlspecialchars($homework["description"]); ?>
             </div>
 
         <?php endif; ?>
 
     </div>
+</div>
+<div class="card mb-4">
+    <div class="card-header"><strong>Submission Summary</strong></div>
+    <div class="card-body">
 
-
-    <div class="card">
-
-        <h3>Submission Summary</h3>
-
-        <div class="stats">
-
-            <div class="stat">
-                <label>Total Students</label>
-                <div class="num"><?php echo $total_students; ?></div>
+        <div class="row g-3">
+            <div class="col-6 col-md">
+                <div class="border rounded p-3 bg-light text-center h-100">
+                    <div class="text-body-secondary small">Total Students</div>
+                    <div class="fs-5 fw-semibold"><?php echo $total_students; ?></div>
+                </div>
             </div>
-
-            <div class="stat">
-                <label>Submitted</label>
-                <div class="num"><?php echo $submitted_count; ?></div>
+            <div class="col-6 col-md">
+                <div class="border rounded p-3 bg-light text-center h-100">
+                    <div class="text-body-secondary small">Submitted</div>
+                    <div class="fs-5 fw-semibold"><?php echo $submitted_count; ?></div>
+                </div>
             </div>
-
-            <div class="stat">
-                <label>Checked</label>
-                <div class="num"><?php echo $checked_count; ?></div>
+            <div class="col-6 col-md">
+                <div class="border rounded p-3 bg-light text-center h-100">
+                    <div class="text-body-secondary small">Checked</div>
+                    <div class="fs-5 fw-semibold"><?php echo $checked_count; ?></div>
+                </div>
             </div>
-
-            <div class="stat">
-                <label>Pending</label>
-                <div class="num"><?php echo $pending_count; ?></div>
+            <div class="col-6 col-md">
+                <div class="border rounded p-3 bg-light text-center h-100">
+                    <div class="text-body-secondary small">Pending</div>
+                    <div class="fs-5 fw-semibold"><?php echo $pending_count; ?></div>
+                </div>
             </div>
-
-            <div class="stat">
-                <label>Late</label>
-                <div class="num"><?php echo $late_count; ?></div>
+            <div class="col-6 col-md">
+                <div class="border rounded p-3 bg-light text-center h-100">
+                    <div class="text-body-secondary small">Late</div>
+                    <div class="fs-5 fw-semibold"><?php echo $late_count; ?></div>
+                </div>
             </div>
-
         </div>
 
-        <div class="progress-wrap">
-
-            <label>
+        <div class="mt-4">
+            <div class="text-body-secondary small mb-1">
                 Completion: <?php echo $progress; ?>%
                 (<?php echo $done_count; ?> of <?php echo $total_students; ?> students)
-            </label>
-
-            <div class="progress">
-                <span style="width: <?php echo $progress; ?>%"></span>
             </div>
-
+            <div class="progress" style="height: 10px;">
+                <div
+                    class="progress-bar"
+                    role="progressbar"
+                    style="width: <?php echo $progress; ?>%;"
+                    aria-valuenow="<?php echo $progress; ?>"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                ></div>
+            </div>
         </div>
 
     </div>
-
-
-    <div class="actions">
-
-        <a
-            class="btn"
-            href="submissions.php?hw=<?php echo urlencode($homework["homework_uid"]); ?>"
-        >
-            Student Submissions
-        </a>
-
-        <a
-            class="btn gray"
-            href="edit.php?hw=<?php echo urlencode($homework["homework_uid"]); ?>"
-        >
-            Edit Homework
-        </a>
-
-        <a class="btn gray" href="index.php">
-            All Homework
-        </a>
-
-    </div>
-
 </div>
 
-</body>
+<div class="d-flex flex-wrap gap-2 mb-4">
+    <a
+        class="btn btn-primary"
+        href="submissions.php?hw=<?php echo urlencode($homework["homework_uid"]); ?>"
+    >
+        Student Submissions
+    </a>
+    <a
+        class="btn btn-outline-primary"
+        href="edit.php?hw=<?php echo urlencode($homework["homework_uid"]); ?>"
+    >
+        Edit Homework
+    </a>
+    <a class="btn btn-outline-secondary" href="index.php">
+        All Homework
+    </a>
+</div>
 
-</html>
-
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 

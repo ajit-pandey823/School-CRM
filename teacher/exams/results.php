@@ -21,51 +21,31 @@ $exam = examsFetchSchedule($conn, $school_uid, $teacher_uid, $schedule_uid);
 
 if (!$exam) {
 
-    ?>
-    <!DOCTYPE html>
-    <html lang="en">
+?>
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'exams';
+$UI_TITLE        = 'Marks Status';
+$UI_CRUMBS       = [];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
-    <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Marks Status</title>
-
-    <style>
-    <?= examsModuleStyles() ?>
-    </style>
-
-    </head>
-
-    <body>
-
-    <div class="container">
-
-        <div class="card">
-
-            <a class="back-link" href="index.php">&larr; Back to Exam List</a>
-
-            <h1>Marks Status</h1>
-
-            <div class="error">
-                Exam not found, or it does not belong to the classes, sections
-                and subjects assigned to you.
-            </div>
-
-            <div class="toolbar">
-                <a class="btn" href="index.php">Back to Exam List</a>
-            </div>
-
-        </div>
-
+<div class="card mb-4">
+    <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <strong>Marks Status</strong>
+        <a href="index.php" class="btn btn-outline-secondary btn-sm">&larr; Back to Exam List</a>
     </div>
+    <div class="card-body">
+        <div class="alert alert-danger mb-0">
+            Exam not found, or it does not belong to the classes, sections
+            and subjects assigned to you.
+        </div>
+    </div>
+</div>
 
-    </body>
-
-    </html>
-    <?php
+<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php
 
     exit();
 }
@@ -102,49 +82,45 @@ $enter_marks_url = "../marks/index.php?action=load"
 $detail_url = "view.php?uid=" . urlencode((string)$exam["schedule_uid"]);
 
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Marks Status</title>
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'exams';
+$UI_TITLE        = 'Marks Status';
+$UI_CRUMBS       = [];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
 <style>
-<?= examsModuleStyles() ?>
+    .badge-pending   { background:#adb5bd; color:#fff; }
+    .badge-submitted { background:#198754; color:#fff; }
+    .badge-draft     { background:#ffc107; color:#4d3b00; }
+    .detail-item     { background: var(--bs-tertiary-bg, #f8f9fa); border: 1px solid var(--bs-border-color, #dee2e6); border-radius: .375rem; padding: .5rem .75rem; }
+    .detail-item > span { display: block; font-size: .75rem; color: var(--bs-secondary-color, #6c757d); text-transform: uppercase; letter-spacing: .03em; }
+    @media print { .no-print { display: none !important; } }
 </style>
 
-</head>
+<div class="card mb-4">
 
-<body>
+    <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <strong>Marks Status</strong>
+        <a href="<?= htmlspecialchars($detail_url) ?>" class="btn btn-outline-secondary btn-sm">&larr; Back to Exam Details</a>
+    </div>
 
-<div class="container">
+    <div class="card-body">
 
-    <div class="card">
+        <p class="text-body-secondary mb-3">
+            Teacher: <strong><?= htmlspecialchars($teacher_name) ?></strong>
+        </p>
 
-        <a class="back-link" href="<?= htmlspecialchars($detail_url) ?>">
-            &larr; Back to Exam Details
-        </a>
+        <div class="row g-3 mb-4">
 
-        <h1>Marks Status</h1>
-
-        <div class="teacher-info">
-            Teacher:
-            <strong><?= htmlspecialchars($teacher_name) ?></strong>
-        </div>
-
-        <div class="detail-grid">
-
-            <div class="detail-item">
+            <div class="detail-item col-12 col-md-6 col-xl-4">
                 <span>Exam</span>
                 <strong><?= htmlspecialchars((string)$exam["exam_name"]) ?></strong>
             </div>
 
-            <div class="detail-item">
+            <div class="detail-item col-12 col-md-6 col-xl-4">
                 <span>Class &amp; Section</span>
                 <strong>
                     <?= htmlspecialchars((string)$exam["class_name"]) ?>
@@ -153,65 +129,47 @@ $detail_url = "view.php?uid=" . urlencode((string)$exam["schedule_uid"]);
                 </strong>
             </div>
 
-            <div class="detail-item">
+            <div class="detail-item col-12 col-md-6 col-xl-4">
                 <span>Subject</span>
                 <strong><?= htmlspecialchars((string)$exam["subject_name"]) ?></strong>
             </div>
 
-            <div class="detail-item">
+            <div class="detail-item col-12 col-md-6 col-xl-4">
                 <span>Maximum Marks</span>
                 <strong><?= htmlspecialchars(examsNumberLabel($max_marks_value)) ?></strong>
             </div>
 
-            <div class="detail-item">
+            <div class="detail-item col-12 col-md-6 col-xl-4">
                 <span>Exam Date</span>
                 <strong><?= htmlspecialchars(examsDateLabel($exam["exam_date"])) ?></strong>
             </div>
 
-            <div class="detail-item">
+            <div class="detail-item col-12 col-md-6 col-xl-4">
                 <span>Exam Status</span>
                 <strong><?= htmlspecialchars(examsScheduleStatus($exam)["label"]) ?></strong>
             </div>
 
         </div>
 
-        <div class="summary" style="margin-top:18px;">
+        <div class="row g-3 mt-4">
 
-            <div class="summary-card accent-total">
-                <span>Total Students</span>
-                <strong><?= (int)$bundle["total"] ?></strong>
-            </div>
+            <div class="col-6 col-lg-4 col-xl"><div class="card h-100"><div class="card-body"><div class="text-body-secondary small text-uppercase">Total Students</div><div class="fs-5 fw-semibold"><?= (int)$bundle["total"] ?></div></div></div></div>
 
-            <div class="summary-card accent-completed">
-                <span>Marks Entered</span>
-                <strong><?= (int)$bundle["entered"] ?></strong>
-            </div>
+            <div class="col-6 col-lg-4 col-xl"><div class="card h-100"><div class="card-body"><div class="text-body-secondary small text-uppercase">Marks Entered</div><div class="fs-5 fw-semibold"><?= (int)$bundle["entered"] ?></div></div></div></div>
 
-            <div class="summary-card accent-ongoing">
-                <span>Pending</span>
-                <strong><?= (int)$bundle["pending"] ?></strong>
-            </div>
+            <div class="col-6 col-lg-4 col-xl"><div class="card h-100"><div class="card-body"><div class="text-body-secondary small text-uppercase">Pending</div><div class="fs-5 fw-semibold"><?= (int)$bundle["pending"] ?></div></div></div></div>
 
-            <div class="summary-card accent-upcoming">
-                <span>Absent</span>
-                <strong><?= (int)$bundle["absent"] ?></strong>
-            </div>
+            <div class="col-6 col-lg-4 col-xl"><div class="card h-100"><div class="card-body"><div class="text-body-secondary small text-uppercase">Absent</div><div class="fs-5 fw-semibold"><?= (int)$bundle["absent"] ?></div></div></div></div>
 
-            <div class="summary-card accent-upcoming">
-                <span>Exempted</span>
-                <strong><?= (int)$bundle["exempted"] ?></strong>
-            </div>
+            <div class="col-6 col-lg-4 col-xl"><div class="card h-100"><div class="card-body"><div class="text-body-secondary small text-uppercase">Exempted</div><div class="fs-5 fw-semibold"><?= (int)$bundle["exempted"] ?></div></div></div></div>
 
-            <div class="summary-card accent-total">
-                <span>Submission</span>
-                <strong style="font-size:16px;">
+            <div class="col-6 col-lg-4 col-xl"><div class="card h-100"><div class="card-body"><div class="text-body-secondary small text-uppercase">Submission</div><div class="fs-5 fw-semibold">
                     <?= htmlspecialchars($bundle["status_label"]) ?>
-                </strong>
-            </div>
+                </div></div></div></div>
 
         </div>
 
-        <div class="notice">
+        <div class="alert alert-info mb-0">
             Marks Entry status: <strong>Submitted</strong> =
             <?= (int)$bundle["submitted"] ?>,
             <strong>Draft</strong> = <?= (int)$bundle["draft"] ?>,
@@ -221,21 +179,25 @@ $detail_url = "view.php?uid=" . urlencode((string)$exam["schedule_uid"]);
 
     </div>
 
+</div>
 
-    <div class="card">
 
-        <h2>Student wise Marks Status</h2>
+<div class="card mb-4">
+
+    <div class="card-header"><strong>Student wise Marks Status</strong></div>
+
+    <div class="card-body">
 
         <?php if ((int)$bundle["total"] === 0): ?>
 
-            <div class="empty">
+            <div class="alert alert-warning mb-0">
                 No active students found in this class and section for the
                 selected academic session.
             </div>
 
         <?php else: ?>
 
-            <table>
+            <div class="table-responsive"><table class="table table-striped table-hover align-middle mb-0">
 
                 <thead>
                     <tr>
@@ -301,7 +263,7 @@ $detail_url = "view.php?uid=" . urlencode((string)$exam["schedule_uid"]);
 
                         <td>
                             <?php if (trim((string)$student_row["grade"]) !== ""): ?>
-                                <span class="grade-box"><?= htmlspecialchars((string)$student_row["grade"]) ?></span>
+                                <span class="badge bg-light text-dark border"><?= htmlspecialchars((string)$student_row["grade"]) ?></span>
                             <?php else: ?>
                                 -
                             <?php endif; ?>
@@ -319,17 +281,17 @@ $detail_url = "view.php?uid=" . urlencode((string)$exam["schedule_uid"]);
 
                 </tbody>
 
-            </table>
+            </table></div>
 
         <?php endif; ?>
 
-        <div class="toolbar no-print">
+        <div class="d-flex flex-wrap gap-2 mt-3 no-print">
 
-            <a class="btn btn-green" href="<?= htmlspecialchars($enter_marks_url) ?>">
+            <a class="btn btn-success" href="<?= htmlspecialchars($enter_marks_url) ?>">
                 📝 Enter Marks
             </a>
 
-            <a class="btn btn-outline" href="<?= htmlspecialchars($detail_url) ?>">
+            <a class="btn btn-outline-primary" href="<?= htmlspecialchars($detail_url) ?>">
                 👁️ Back to Exam Details
             </a>
 
@@ -337,7 +299,7 @@ $detail_url = "view.php?uid=" . urlencode((string)$exam["schedule_uid"]);
                 🖨️ Print
             </button>
 
-            <a class="btn btn-outline" href="index.php">📋 Exam List</a>
+            <a class="btn btn-outline-primary" href="index.php">📋 Exam List</a>
 
         </div>
 
@@ -345,7 +307,5 @@ $detail_url = "view.php?uid=" . urlencode((string)$exam["schedule_uid"]);
 
 </div>
 
-</body>
-
-</html>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 

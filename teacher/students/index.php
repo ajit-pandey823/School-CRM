@@ -199,370 +199,125 @@ foreach ($students as $row) {
 }
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'students';
+$UI_TITLE        = 'My Students';
+$UI_CRUMBS       = [['label' => 'My Students', 'url' => 'index.php']];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>My Students</title>
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            color: #1f2937;
-        }
-
-        .header {
-            background: #ffffff;
-            padding: 20px 25px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 26px;
-        }
-
-        .container {
-            padding: 25px;
-        }
-
-        .back {
-            display: inline-block;
-            margin-bottom: 20px;
-            text-decoration: none;
-            color: #2563eb;
-            font-weight: 600;
-        }
-
-        .title-box {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-        }
-
-        .title-box h2 {
-            margin: 0 0 8px;
-        }
-
-        .title-box p {
-            margin: 6px 0 0;
-            color: #6b7280;
-        }
-
-        .title-box .teacher-line strong {
-            color: #1f2937;
-        }
-
-        .warn {
-            color: #b91c1c !important;
-            font-weight: 600;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 20px;
-        }
-
-        .student-card {
-            background: #ffffff;
-            padding: 22px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .card-head {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e5e7eb;
-            margin-bottom: 15px;
-        }
-
-        .avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #2563eb;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .card-head h3 {
-            margin: 0 0 6px;
-            font-size: 18px;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .badge.active {
-            background: #dcfce7;
-            color: #15803d;
-        }
-
-        .badge.inactive {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .badge.other {
-            background: #fef3c7;
-            color: #b45309;
-        }
-
-        .fields {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .field label {
-            display: block;
-            font-size: 12px;
-            color: #6b7280;
-            margin-bottom: 3px;
-        }
-
-        .field strong {
-            font-size: 14px;
-            color: #111827;
-            word-break: break-word;
-        }
-
-        .view-link {
-            display: inline-block;
-            margin-top: 16px;
-            color: #2563eb;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        .view-link:hover {
-            text-decoration: underline;
-        }
-
-        .filter-bar {
-            background: #ffffff;
-            padding: 18px 22px;
-            border-radius: 12px;
-            margin-bottom: 18px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .filter-bar input[type="text"] {
-            flex: 1 1 250px;
-            min-width: 200px;
-            padding: 11px 14px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .filter-bar select {
-            padding: 11px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            background: #ffffff;
-            min-width: 150px;
-            outline: none;
-            cursor: pointer;
-        }
-
-        .filter-bar input[type="text"]:focus,
-        .filter-bar select:focus {
-            border-color: #2563eb;
-        }
-
-        .result-line {
-            flex-basis: 100%;
-            margin: 0;
-            color: #6b7280;
-            font-size: 13px;
-        }
-
-        .no-match {
-            display: none;
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            text-align: center;
-            color: #6b7280;
-        }
-
-        .no-match h3 {
-            margin: 0 0 8px;
-            color: #4b5563;
-        }
-
-        .empty {
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            text-align: center;
-            color: #6b7280;
-        }
-
-        .empty h3 {
-            margin: 0 0 8px;
-            color: #4b5563;
-        }
-
-    </style>
-
-</head>
-
-<body>
-
-<div class="header">
-
-    <h1>My Students</h1>
-
-</div>
-
-<div class="container">
-
-    <a href="../dashboard.php" class="back">
-        ← Back to Dashboard
-    </a>
-
-
-    <div class="title-box">
-
-        <h2>Students List</h2>
-
-        <p>
-            Students studying in your assigned classes and sections.
-        </p>
+<div class="card mb-4">
+    <div class="card-header">
+        <strong>My Students</strong>
+    </div>
+    <div class="card-body">
 
         <?php if ($teacher_uid === ""): ?>
 
-            <p class="warn">
+            <div class="alert alert-danger" role="alert">
                 Teacher profile not found.
-            </p>
+            </div>
 
         <?php else: ?>
 
-            <p class="teacher-line">
+            <p class="text-body-secondary mb-1">
                 Teacher:
-                <strong><?php echo htmlspecialchars($teacher_name); ?></strong>
+                <strong><?= htmlspecialchars($teacher_name) ?></strong>
                 &nbsp;&nbsp;|&nbsp;&nbsp;
                 Total Students:
-                <strong><?php echo count($students); ?></strong>
+                <strong><?= count($students) ?></strong>
+            </p>
+
+            <p class="text-body-secondary">
+                Students studying in your assigned classes and sections.
             </p>
 
         <?php endif; ?>
 
-    </div>
 
+        <?php if (count($students) === 0): ?>
 
-    <?php if (count($students) === 0): ?>
+            <div class="alert alert-warning mb-0" role="alert">
+                No active students were found in your assigned classes.
+            </div>
 
-        <div class="empty">
+        <?php else: ?>
 
-            <h3>No Students Found</h3>
+            <!-- SEARCH & FILTERS -->
+            <div class="row g-2 align-items-end mb-3">
 
-            <p>
-                No active students were found
-                in your assigned classes.
-            </p>
-
-        </div>
-
-    <?php else: ?>
-
-        <div class="filter-bar">
-
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Search Student..."
-                autocomplete="off"
-            >
-
-            <select id="classFilter">
-
-                <option value="">All Classes</option>
-
-                <?php foreach ($class_options as $class_option): ?>
-
-                    <option value="<?php echo htmlspecialchars($class_option, ENT_QUOTES); ?>">
-                        <?php echo htmlspecialchars($class_option); ?>
-                    </option>
-
-                <?php endforeach; ?>
-
-            </select>
-
-            <select id="sectionFilter">
-
-                <option value="">All Sections</option>
-
-                <?php foreach ($section_options as $section_option => $section_classes): ?>
-
-                    <option
-                        value="<?php echo htmlspecialchars($section_option, ENT_QUOTES); ?>"
-                        data-classes="<?php echo htmlspecialchars(implode('|', $section_classes), ENT_QUOTES); ?>"
+                <div class="col-12 col-md">
+                    <label class="form-label small mb-1" for="searchInput">
+                        Search
+                    </label>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="form-control"
+                        placeholder="Search Student..."
+                        autocomplete="off"
                     >
-                        <?php echo htmlspecialchars($section_option); ?>
-                    </option>
+                </div>
 
-                <?php endforeach; ?>
+                <div class="col-6 col-md-auto">
+                    <label class="form-label small mb-1" for="classFilter">
+                        Class
+                    </label>
+                    <select id="classFilter" class="form-select">
+                        <option value="">All Classes</option>
+                        <?php foreach ($class_options as $class_option): ?>
+                            <option value="<?= htmlspecialchars($class_option, ENT_QUOTES) ?>">
+                                <?= htmlspecialchars($class_option) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-            </select>
+                <div class="col-6 col-md-auto">
+                    <label class="form-label small mb-1" for="sectionFilter">
+                        Section
+                    </label>
+                    <select id="sectionFilter" class="form-select">
+                        <option value="">All Sections</option>
+                        <?php foreach ($section_options as $section_option => $section_classes): ?>
+                            <option
+                                value="<?= htmlspecialchars($section_option, ENT_QUOTES) ?>"
+                                data-classes="<?= htmlspecialchars(implode('|', $section_classes), ENT_QUOTES) ?>"
+                            >
+                                <?= htmlspecialchars($section_option) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-            <select id="statusFilter">
+                <div class="col-6 col-md-auto">
+                    <label class="form-label small mb-1" for="statusFilter">
+                        Status
+                    </label>
+                    <select id="statusFilter" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
 
-                <option value="">All Status</option>
+                <div class="col-12">
+                    <p class="text-body-secondary small mb-0" id="resultLine">
+                        Showing
+                        <?= count($students) ?>
+                        of
+                        <?= count($students) ?>
+                        students
+                    </p>
+                </div>
 
-                <option value="active">Active</option>
-
-                <option value="inactive">Inactive</option>
-
-            </select>
-
-            <p class="result-line" id="resultLine">
-                Showing
-                <?php echo count($students); ?>
-                of
-                <?php echo count($students); ?>
-                students
-            </p>
-
-        </div>
+            </div>
 
 
-        <div class="grid">
+        <div class="row g-3">
 
             <?php foreach ($students as $row): ?>
 
@@ -581,10 +336,20 @@ foreach ($students as $row) {
                     );
                 }
 
+                $badge_map = [
+                    "active"   => "bg-success",
+                    "inactive" => "bg-danger",
+                    "other"    => "bg-warning text-dark"
+                ];
+
+                $badge_class = $badge_map[
+                    studentStatusBadge($row["student_status"])
+                ] ?? "bg-secondary";
+
                 ?>
 
                 <div
-                    class="student-card"
+                    class="col-12 col-md-6 col-xl-4 student-card"
                     data-name="<?php echo htmlspecialchars($student_name, ENT_QUOTES); ?>"
                     data-admission="<?php echo htmlspecialchars($row['admission_no'], ENT_QUOTES); ?>"
                     data-roll="<?php echo htmlspecialchars($row['roll_no'] ?? '', ENT_QUOTES); ?>"
@@ -593,124 +358,86 @@ foreach ($students as $row) {
                     data-status="<?php echo htmlspecialchars($row['student_status'], ENT_QUOTES); ?>"
                 >
 
-                    <div class="card-head">
+                    <div class="card h-100">
+                        <div class="card-body">
 
-                        <div class="avatar">
-                            <?php echo htmlspecialchars($initial); ?>
+                            <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom">
+
+                                <div
+                                    class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+                                    style="width:48px;height:48px;font-size:18px;"
+                                >
+                                    <?php echo htmlspecialchars($initial); ?>
+                                </div>
+
+                                <div>
+
+                                    <h5 class="mb-1">
+                                        <?php echo htmlspecialchars($student_name); ?>
+                                    </h5>
+
+                                    <span class="badge <?= $badge_class ?>">
+                                        <?php echo htmlspecialchars(ucfirst($row["student_status"])); ?>
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        <div class="row g-2">
+
+                            <div class="col-6">
+                                <div class="text-body-secondary small mb-1">Student ID / Admission No.</div>
+                                <strong><?php echo htmlspecialchars($row["admission_no"]); ?></strong>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="text-body-secondary small mb-1">Roll No.</div>
+                                <strong><?php echo htmlspecialchars($row["roll_no"] ?? "-"); ?></strong>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="text-body-secondary small mb-1">Class</div>
+                                <strong><?php echo htmlspecialchars($row["class_name"]); ?></strong>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="text-body-secondary small mb-1">Section</div>
+                                <strong><?php echo htmlspecialchars($row["section_name"]); ?></strong>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="text-body-secondary small mb-1">Gender</div>
+                                <strong><?php echo htmlspecialchars(ucfirst($row["gender"] ?? "-")); ?></strong>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="text-body-secondary small mb-1">Date of Birth</div>
+                                <strong><?php echo htmlspecialchars($dob_text); ?></strong>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="text-body-secondary small mb-1">Parent / Guardian Name</div>
+                                <strong><?php echo htmlspecialchars(studentGuardianName($row)); ?></strong>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="text-body-secondary small mb-1">Contact Number</div>
+                                <strong><?php echo htmlspecialchars(studentContactNumber($row)); ?></strong>
+                            </div>
+
                         </div>
 
-                        <div>
 
-                            <h3>
-                                <?php echo htmlspecialchars($student_name); ?>
-                            </h3>
-
-                            <span class="badge <?php echo studentStatusBadge($row['student_status']); ?>">
-                                <?php echo htmlspecialchars(ucfirst($row["student_status"])); ?>
-                            </span>
+                            <a
+                                class="btn btn-primary btn-sm mt-3"
+                                href="view.php?student=<?php echo urlencode($row['student_uid']); ?>"
+                            >
+                                View Profile
+                            </a>
 
                         </div>
-
                     </div>
-
-                    <div class="fields">
-
-                        <div class="field">
-
-                            <label>Student ID / Admission No.</label>
-
-                            <strong>
-                                <?php echo htmlspecialchars($row["admission_no"]); ?>
-                            </strong>
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label>Roll No.</label>
-
-                            <strong>
-                                <?php echo htmlspecialchars($row["roll_no"] ?? "-"); ?>
-                            </strong>
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label>Class</label>
-
-                            <strong>
-                                <?php echo htmlspecialchars($row["class_name"]); ?>
-                            </strong>
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label>Section</label>
-
-                            <strong>
-                                <?php echo htmlspecialchars($row["section_name"]); ?>
-                            </strong>
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label>Gender</label>
-
-                            <strong>
-                                <?php echo htmlspecialchars(ucfirst($row["gender"] ?? "-")); ?>
-                            </strong>
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label>Date of Birth</label>
-
-                            <strong>
-                                <?php echo htmlspecialchars($dob_text); ?>
-                            </strong>
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label>Parent / Guardian Name</label>
-
-                            <strong>
-                                <?php echo htmlspecialchars(studentGuardianName($row)); ?>
-                            </strong>
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label>Contact Number</label>
-
-                            <strong>
-                                <?php echo htmlspecialchars(studentContactNumber($row)); ?>
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <a
-                        class="view-link"
-                        href="view.php?student=<?php echo urlencode($row['student_uid']); ?>"
-                    >
-                        View Profile →
-                    </a>
 
                 </div>
 
@@ -719,19 +446,19 @@ foreach ($students as $row) {
         </div>
 
 
-        <div class="no-match" id="noMatch">
+        <div class="alert alert-info mb-0 mt-3" id="noMatch" style="display:none" role="alert">
 
-            <h3>No Students Found</h3>
+            <strong>No Students Found</strong>
 
-            <p>
-                No students match your search
-                or selected filters.
-            </p>
+            <div class="mt-1">
+                No students match your search or selected filters.
+            </div>
 
         </div>
 
     <?php endif; ?>
 
+    </div>
 </div>
 
 <script>
@@ -868,9 +595,7 @@ foreach ($students as $row) {
 
 </script>
 
-</body>
-
-</html>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 
 
 

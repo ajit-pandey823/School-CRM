@@ -258,119 +258,122 @@ $filters_applied = (
 $clear_filters_url = "index.php";
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Exams</title>
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'exams';
+$UI_TITLE        = 'Exams';
+$UI_CRUMBS       = [];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
 <style>
-<?= examsModuleStyles() ?>
+    .badge-upcoming  { background:#0d6efd; color:#fff; }
+    .badge-ongoing   { background:#fd7e14; color:#fff; }
+    .badge-completed { background:#198754; color:#fff; }
+    .badge-scheduled { background:#6c757d; color:#fff; }
+    .badge-cancelled { background:#dc3545; color:#fff; }
+    .badge-pending   { background:#adb5bd; color:#fff; }
+    .badge-submitted { background:#198754; color:#fff; }
+    .badge-draft     { background:#ffc107; color:#4d3b00; }
+    .prewrap         { white-space: pre-wrap; word-break: break-word; font-family: inherit; }
+    @media print { .no-print { display: none !important; } }
 </style>
 
-</head>
+<!-- ================= HEADER ================= -->
 
-<body>
+<div class="card mb-4">
 
-<div class="container">
+    <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <strong>Exams</strong>
+        <a href="../dashboard.php" class="btn btn-outline-secondary btn-sm">&larr; Back to Dashboard</a>
+    </div>
 
-    <!-- ================= HEADER ================= -->
+    <div class="card-body">
 
-    <div class="card">
+        <p class="text-body-secondary mb-2">
+            Teacher: <strong><?= htmlspecialchars($teacher_name) ?></strong>
+        </p>
 
-        <a class="back-link" href="../dashboard.php">&larr; Back to Dashboard</a>
-
-        <h1>Exams</h1>
-
-        <div class="teacher-info">
-            Teacher:
-            <strong><?= htmlspecialchars($teacher_name) ?></strong>
-        </div>
-
-        <div class="notice">
+        <div class="alert alert-info">
             You can view exam information and enter marks.
             Adding, editing or deleting exams and changing the exam schedule is
             managed by the school administrator.
         </div>
 
-        <div class="toolbar">
-            <a class="btn btn-outline" href="index.php">📋 Exam List</a>
-            <a class="btn btn-outline" href="schedule.php">📅 View Schedule</a>
-            <a class="btn" href="../marks/index.php">📝 Enter Marks</a>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-outline-primary btn-sm" href="index.php">📋 Exam List</a>
+            <a class="btn btn-outline-primary btn-sm" href="schedule.php">📅 View Schedule</a>
+            <a class="btn btn-primary btn-sm" href="../marks/index.php">📝 Enter Marks</a>
         </div>
 
     </div>
 
+</div>
+
 <?php if (!$has_assignments): ?>
 
-    <div class="card">
-
-        <div class="empty">
-            No class or subject has been assigned to you yet, so there are no
-            exams to show. Please contact the school administrator.
-        </div>
-
+    <div class="alert alert-warning" role="alert">
+        No class or subject has been assigned to you yet, so there are no
+        exams to show. Please contact the school administrator.
     </div>
 
 <?php else: ?>
 
     <!-- ================= 1. EXAM OVERVIEW ================= -->
 
-    <div class="card">
-
-        <h2>Exam Overview</h2>
-
-        <p class="muted">
-            Counts are based on your assigned classes, sections and subjects
-            using the filters below.
-        </p>
-
-        <div class="summary">
-
-            <div class="summary-card accent-total">
-                <span>Total Exams</span>
-                <strong><?= (int)$overview["total"] ?></strong>
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-body-secondary small text-uppercase">Total Exams</div>
+                    <div class="fs-4 fw-semibold"><?= (int)$overview["total"] ?></div>
+                </div>
             </div>
-
-            <div class="summary-card accent-upcoming">
-                <span>Upcoming Exams</span>
-                <strong><?= (int)$overview["upcoming"] ?></strong>
-            </div>
-
-            <div class="summary-card accent-ongoing">
-                <span>Ongoing Exams</span>
-                <strong><?= (int)$overview["ongoing"] ?></strong>
-            </div>
-
-            <div class="summary-card accent-completed">
-                <span>Completed Exams</span>
-                <strong><?= (int)$overview["completed"] ?></strong>
-            </div>
-
         </div>
-
+        <div class="col-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-body-secondary small text-uppercase">Upcoming</div>
+                    <div class="fs-4 fw-semibold text-primary"><?= (int)$overview["upcoming"] ?></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-body-secondary small text-uppercase">Ongoing</div>
+                    <div class="fs-4 fw-semibold text-warning"><?= (int)$overview["ongoing"] ?></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-body-secondary small text-uppercase">Completed</div>
+                    <div class="fs-4 fw-semibold text-success"><?= (int)$overview["completed"] ?></div>
+                </div>
+            </div>
+        </div>
     </div>
 
 
 
     <!-- ================= 3. FILTERS ================= -->
 
-    <div class="card">
+    <div class="card mb-4">
 
-        <h2>Filters</h2>
+        <div class="card-header"><strong>Filters</strong></div>
 
-        <form method="get" action="index.php" id="examFilterForm">
+        <div class="card-body">
 
-            <div class="filter-grid">
+            <form method="get" action="index.php" id="examFilterForm">
 
-                <div>
-                    <label for="academic_year_uid">Academic Session</label>
-                    <select name="academic_year_uid" id="academic_year_uid">
+                <div class="row g-3">
+
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <label class="form-label" for="academic_year_uid">Academic Session</label>
+                        <select class="form-select" name="academic_year_uid" id="academic_year_uid">
                         <option value="">All Sessions</option>
                         <?php foreach ($exams_year_options as $year_key => $year_label): ?>
                             <option
@@ -382,9 +385,9 @@ $clear_filters_url = "index.php";
                     </select>
                 </div>
 
-                <div>
-                    <label for="class_uid">Class</label>
-                    <select name="class_uid" id="class_uid">
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <label class="form-label" for="class_uid">Class</label>
+                        <select class="form-select" name="class_uid" id="class_uid">
                         <option value="">All Classes</option>
                         <?php foreach ($exams_class_options as $class_key => $class_label): ?>
                             <option
@@ -396,9 +399,9 @@ $clear_filters_url = "index.php";
                     </select>
                 </div>
 
-                <div>
-                    <label for="section_uid">Section</label>
-                    <select name="section_uid" id="section_uid">
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <label class="form-label" for="section_uid">Section</label>
+                        <select class="form-select" name="section_uid" id="section_uid">
                         <option value="">All Sections</option>
                         <?php foreach ($exams_section_options as $section_key => $section_data): ?>
                             <option
@@ -411,9 +414,9 @@ $clear_filters_url = "index.php";
                     </select>
                 </div>
 
-                <div>
-                    <label for="subject_uid">Subject</label>
-                    <select name="subject_uid" id="subject_uid">
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <label class="form-label" for="subject_uid">Subject</label>
+                        <select class="form-select" name="subject_uid" id="subject_uid">
                         <option value="">All Subjects</option>
                         <?php foreach ($exams_subject_options as $subject_key => $subject_label): ?>
                             <option
@@ -425,9 +428,9 @@ $clear_filters_url = "index.php";
                     </select>
                 </div>
 
-                <div>
-                    <label for="exam_uid">Exam</label>
-                    <select name="exam_uid" id="exam_uid">
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <label class="form-label" for="exam_uid">Exam</label>
+                        <select class="form-select" name="exam_uid" id="exam_uid">
                         <option value="">All Exams</option>
                         <?php foreach ($exams_exam_options as $exam_key => $exam_data): ?>
                             <option
@@ -439,27 +442,29 @@ $clear_filters_url = "index.php";
                     </select>
                 </div>
 
-                <div>
-                    <label for="date_from">Date From</label>
-                    <input
-                        type="date"
-                        name="date_from"
-                        id="date_from"
+                    <div class="col-6 col-md-3 col-xl-3">
+                        <label class="form-label" for="date_from">Date From</label>
+                        <input
+                            type="date"
+                            class="form-control"
+                            name="date_from"
+                            id="date_from"
                         value="<?= htmlspecialchars($filter_from) ?>">
                 </div>
 
-                <div>
-                    <label for="date_to">Date To</label>
-                    <input
-                        type="date"
-                        name="date_to"
-                        id="date_to"
+                    <div class="col-6 col-md-3 col-xl-3">
+                        <label class="form-label" for="date_to">Date To</label>
+                        <input
+                            type="date"
+                            class="form-control"
+                            name="date_to"
+                            id="date_to"
                         value="<?= htmlspecialchars($filter_to) ?>">
                 </div>
 
-                <div>
-                    <label for="status">Status</label>
-                    <select name="status" id="status">
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <label class="form-label" for="status">Status</label>
+                        <select class="form-select" name="status" id="status">
                         <option value="">All Status</option>
                         <option value="upcoming"  <?= ($filter_status === "upcoming")  ? "selected" : "" ?>>Upcoming</option>
                         <option value="ongoing"   <?= ($filter_status === "ongoing")   ? "selected" : "" ?>>Ongoing</option>
@@ -471,38 +476,43 @@ $clear_filters_url = "index.php";
 
             </div>
 
-            <div class="toolbar">
-                <button type="submit" class="btn">Apply Filters</button>
-                <a class="btn btn-secondary" href="<?= htmlspecialchars($clear_filters_url) ?>">Clear Filters</a>
-                <a class="btn btn-outline" href="schedule.php">📅 View Schedule</a>
-            </div>
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a class="btn btn-secondary" href="<?= htmlspecialchars($clear_filters_url) ?>">Clear Filters</a>
+                    <a class="btn btn-outline-primary" href="schedule.php">📅 View Schedule</a>
+                </div>
 
-        </form>
+            </form>
+
+        </div>
 
     </div>
 
 
     <!-- ================= 2. EXAM LIST ================= -->
 
-    <div class="card">
+    <div class="card mb-4">
 
-        <h2>Exam List</h2>
+        <div class="card-header"><strong>Exam List</strong></div>
 
-        <p class="muted">
-            <?= (int)$list_count ?> exam<?= ($list_count === 1) ? "" : "s" ?> found
-            <?= $filters_applied ? "for the selected filters" : "for your classes" ?>.
-            Click <strong>View Details</strong> to open an exam.
-        </p>
+        <div class="card-body">
 
-        <?php if ($list_count === 0): ?>
+            <p class="text-body-secondary">
+                <?= (int)$list_count ?> exam<?= ($list_count === 1) ? "" : "s" ?> found
+                <?= $filters_applied ? "for the selected filters" : "for your classes" ?>.
+                Click <strong>View Details</strong> to open an exam.
+            </p>
 
-            <div class="empty">
-                No exams found. Try changing or clearing the filters.
-            </div>
+            <?php if ($list_count === 0): ?>
 
-        <?php else: ?>
+                <div class="alert alert-warning mb-0">
+                    No exams found. Try changing or clearing the filters.
+                </div>
 
-            <table>
+            <?php else: ?>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle mb-0">
 
                 <thead>
                     <tr>
@@ -538,7 +548,7 @@ $clear_filters_url = "index.php";
                         <td>
                             <strong><?= htmlspecialchars((string)$exam_row["exam_name"]) ?></strong>
 
-                            <div class="muted">
+                            <div class="small text-body-secondary">
                                 <?= htmlspecialchars(ucfirst((string)$exam_row["exam_type"])) ?>
                                 <?php if (trim((string)$exam_row["term"]) !== ""): ?>
                                     &middot; <?= htmlspecialchars((string)$exam_row["term"]) ?>
@@ -569,38 +579,38 @@ $clear_filters_url = "index.php";
                             </span>
                         </td>
 
-                        <td class="row-actions">
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a
+                                    class="btn btn-sm btn-outline-secondary"
+                                    href="view.php?uid=<?= urlencode((string)$exam_row["schedule_uid"]) ?>">
+                                    👁️ Details
+                                </a>
 
-                            <a
-                                class="btn btn-outline"
-                                href="view.php?uid=<?= urlencode((string)$exam_row["schedule_uid"]) ?>">
-                                👁️ View Details
-                            </a>
+                                <a
+                                    class="btn btn-sm btn-outline-secondary"
+                                    href="syllabus.php?uid=<?= urlencode((string)$exam_row["schedule_uid"]) ?>">
+                                    📄 Syllabus
+                                </a>
 
-                            <a
-                                class="btn btn-outline"
-                                href="syllabus.php?uid=<?= urlencode((string)$exam_row["schedule_uid"]) ?>">
-                                📄 Syllabus
-                            </a>
+                                <a
+                                    class="btn btn-sm btn-outline-secondary"
+                                    href="schedule.php?academic_year_uid=<?= urlencode((string)$exam_row["academic_year_uid"]) ?>&amp;class_uid=<?= urlencode((string)$exam_row["class_uid"]) ?>&amp;section_uid=<?= urlencode((string)$exam_row["section_uid"]) ?>">
+                                    📅 Schedule
+                                </a>
 
-                            <a
-                                class="btn btn-outline"
-                                href="schedule.php?academic_year_uid=<?= urlencode((string)$exam_row["academic_year_uid"]) ?>&amp;class_uid=<?= urlencode((string)$exam_row["class_uid"]) ?>&amp;section_uid=<?= urlencode((string)$exam_row["section_uid"]) ?>">
-                                📅 Schedule
-                            </a>
+                                <a
+                                    class="btn btn-sm btn-success"
+                                    href="../marks/index.php?action=load&amp;academic_year_uid=<?= urlencode((string)$exam_row["academic_year_uid"]) ?>&amp;class_uid=<?= urlencode((string)$exam_row["class_uid"]) ?>&amp;section_uid=<?= urlencode((string)$exam_row["section_uid"]) ?>&amp;subject_uid=<?= urlencode((string)$exam_row["subject_uid"]) ?>&amp;exam_uid=<?= urlencode((string)$exam_row["exam_uid"]) ?>&amp;term=<?= urlencode((string)$exam_row["term"]) ?>&amp;max_marks=<?= urlencode((string)$exam_row["max_marks"]) ?>">
+                                    📝 Enter Marks
+                                </a>
 
-                            <a
-                                class="btn"
-                                href="../marks/index.php?action=load&amp;academic_year_uid=<?= urlencode((string)$exam_row["academic_year_uid"]) ?>&amp;class_uid=<?= urlencode((string)$exam_row["class_uid"]) ?>&amp;section_uid=<?= urlencode((string)$exam_row["section_uid"]) ?>&amp;subject_uid=<?= urlencode((string)$exam_row["subject_uid"]) ?>&amp;exam_uid=<?= urlencode((string)$exam_row["exam_uid"]) ?>&amp;term=<?= urlencode((string)$exam_row["term"]) ?>&amp;max_marks=<?= urlencode((string)$exam_row["max_marks"]) ?>">
-                                📝 Enter Marks
-                            </a>
-
-                            <a
-                                class="btn btn-outline"
-                                href="results.php?uid=<?= urlencode((string)$exam_row["schedule_uid"]) ?>">
-                                📊 Marks Status
-                            </a>
-
+                                <a
+                                    class="btn btn-sm btn-outline-primary"
+                                    href="results.php?uid=<?= urlencode((string)$exam_row["schedule_uid"]) ?>">
+                                    📊 Marks Status
+                                </a>
+                            </div>
                         </td>
 
                     </tr>
@@ -610,14 +620,15 @@ $clear_filters_url = "index.php";
                 </tbody>
 
             </table>
+                </div>
 
-        <?php endif; ?>
+            <?php endif; ?>
+
+        </div>
 
     </div>
 
 <?php endif; ?>
-
-</div>
 
 <script>
 
@@ -660,7 +671,5 @@ $clear_filters_url = "index.php";
 
 </script>
 
-</body>
-
-</html>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 

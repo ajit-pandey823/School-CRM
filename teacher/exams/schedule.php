@@ -212,94 +212,80 @@ $enter_marks_link = function ($row) {
 };
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Exam Schedule</title>
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'exams';
+$UI_TITLE        = 'Exam Schedule';
+$UI_CRUMBS       = [];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
 <style>
-<?= examsModuleStyles() ?>
+    .badge-upcoming  { background:#0d6efd; color:#fff; }
+    .badge-ongoing   { background:#fd7e14; color:#fff; }
+    .badge-completed { background:#198754; color:#fff; }
+    .badge-scheduled { background:#6c757d; color:#fff; }
+    .badge-cancelled { background:#dc3545; color:#fff; }
+    @media print { .no-print { display: none !important; } }
 </style>
 
-</head>
+<div class="card mb-4">
 
-<body>
+    <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <strong>Exam Schedule</strong>
+        <a href="index.php" class="btn btn-outline-secondary btn-sm">&larr; Back to Exam List</a>
+    </div>
 
-<div class="container">
+    <div class="card-body">
 
-    <div class="card">
+        <p class="text-body-secondary mb-2">
+            Teacher: <strong><?= htmlspecialchars($teacher_name) ?></strong>
+        </p>
 
-        <a class="back-link" href="index.php">&larr; Back to Exam List</a>
-
-        <h1>Exam Schedule</h1>
-
-        <div class="teacher-info">
-            Teacher:
-            <strong><?= htmlspecialchars($teacher_name) ?></strong>
-        </div>
-
-        <div class="notice">
+        <div class="alert alert-info">
             This is a read only view of your exam schedule. Exam dates and timings
             can only be changed by the school administrator.
         </div>
 
-        <div class="summary" style="margin-top:18px;">
+        <div class="row g-3">
 
-            <div class="summary-card accent-total">
-                <span>Total Exams</span>
-                <strong><?= (int)$schedule_counts["total"] ?></strong>
-            </div>
+            <div class="col-6 col-lg-3"><div class="card h-100"><div class="card-body"><div class="text-body-secondary small text-uppercase">Total Exams</div><div class="fs-4 fw-semibold"><?= (int)$schedule_counts["total"] ?></div></div></div></div>
 
-            <div class="summary-card accent-upcoming">
-                <span>Upcoming</span>
-                <strong><?= (int)$schedule_counts["upcoming"] ?></strong>
-            </div>
+            <div class="col-6 col-lg-3"><div class="card h-100"><div class="card-body"><div class="text-body-secondary small text-uppercase">Upcoming</div><div class="fs-4 fw-semibold"><?= (int)$schedule_counts["upcoming"] ?></div></div></div></div>
 
-            <div class="summary-card accent-ongoing">
-                <span>Ongoing</span>
-                <strong><?= (int)$schedule_counts["ongoing"] ?></strong>
-            </div>
+            <div class="col-6 col-lg-3"><div class="card h-100"><div class="card-body"><div class="text-body-secondary small text-uppercase">Ongoing</div><div class="fs-4 fw-semibold"><?= (int)$schedule_counts["ongoing"] ?></div></div></div></div>
 
-            <div class="summary-card accent-completed">
-                <span>Completed</span>
-                <strong><?= (int)$schedule_counts["completed"] ?></strong>
-            </div>
+            <div class="col-6 col-lg-3"><div class="card h-100"><div class="card-body"><div class="text-body-secondary small text-uppercase">Completed</div><div class="fs-4 fw-semibold"><?= (int)$schedule_counts["completed"] ?></div></div></div></div>
 
         </div>
 
     </div>
 
+</div>
+
 <?php if (!$has_assignments): ?>
 
-    <div class="card">
-
-        <div class="empty">
-            No class or subject has been assigned to you yet, so no exam
-            schedule is available. Please contact the school administrator.
-        </div>
-
+    <div class="alert alert-warning" role="alert">
+        No class or subject has been assigned to you yet, so no exam
+        schedule is available. Please contact the school administrator.
     </div>
 
 <?php else: ?>
 
+    <div class="card mb-4 no-print">
 
-    <div class="card no-print">
+        <div class="card-header"><strong>Schedule Filters</strong></div>
 
-        <h2>Schedule Filters</h2>
+        <div class="card-body">
 
-        <form method="get" action="schedule.php" id="scheduleFilterForm">
+            <form method="get" action="schedule.php" id="scheduleFilterForm">
 
-            <div class="filter-grid">
+                <div class="row g-3">
 
-                <div>
-                    <label for="academic_year_uid">Academic Session</label>
-                    <select name="academic_year_uid" id="academic_year_uid">
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <label class="form-label" for="academic_year_uid">Academic Session</label>
+                        <select class="form-select" name="academic_year_uid" id="academic_year_uid">
                         <option value="">All Sessions</option>
                         <?php foreach ($exams_year_options as $year_key => $year_label): ?>
                             <option
@@ -311,9 +297,9 @@ $enter_marks_link = function ($row) {
                     </select>
                 </div>
 
-                <div>
-                    <label for="class_uid">Class</label>
-                    <select name="class_uid" id="class_uid">
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <label class="form-label" for="class_uid">Class</label>
+                        <select class="form-select" name="class_uid" id="class_uid">
                         <option value="">All Classes</option>
                         <?php foreach ($exams_class_options as $class_key => $class_label): ?>
                             <option
@@ -325,9 +311,9 @@ $enter_marks_link = function ($row) {
                     </select>
                 </div>
 
-                <div>
-                    <label for="section_uid">Section</label>
-                    <select name="section_uid" id="section_uid">
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <label class="form-label" for="section_uid">Section</label>
+                        <select class="form-select" name="section_uid" id="section_uid">
                         <option value="">All Sections</option>
                         <?php foreach ($exams_section_options as $section_key => $section_data): ?>
                             <option
@@ -340,99 +326,104 @@ $enter_marks_link = function ($row) {
                     </select>
                 </div>
 
-                <div>
-                    <label for="date_from">Date From</label>
-                    <input
-                        type="date"
-                        name="date_from"
-                        id="date_from"
+                    <div class="col-6 col-md-3 col-xl-3">
+                        <label class="form-label" for="date_from">Date From</label>
+                        <input
+                            type="date"
+                            class="form-control"
+                            name="date_from"
+                            id="date_from"
                         value="<?= htmlspecialchars($filter_from) ?>">
                 </div>
 
-                <div>
-                    <label for="date_to">Date To</label>
-                    <input
-                        type="date"
-                        name="date_to"
-                        id="date_to"
+                    <div class="col-6 col-md-3 col-xl-3">
+                        <label class="form-label" for="date_to">Date To</label>
+                        <input
+                            type="date"
+                            class="form-control"
+                            name="date_to"
+                            id="date_to"
                         value="<?= htmlspecialchars($filter_to) ?>">
                 </div>
 
             </div>
 
-            <div class="toolbar">
-                <button type="submit" class="btn">Apply Filters</button>
-                <a class="btn btn-secondary" href="schedule.php">Clear Filters</a>
-                <button type="button" class="btn btn-outline" onclick="window.print();">
-                    🖨️ Print Schedule
-                </button>
-                <a class="btn btn-outline" href="index.php">📋 Exam List</a>
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a class="btn btn-secondary" href="schedule.php">Clear Filters</a>
+                    <button type="button" class="btn btn-outline-primary" onclick="window.print();">
+                        🖨️ Print Schedule
+                    </button>
+                    <a class="btn btn-outline-primary" href="index.php">📋 Exam List</a>
+                </div>
+
+            </form>
+
             </div>
 
-        </form>
+        </div>
 
-    </div>
+    <div class="card mb-4">
 
+        <div class="card-header"><strong>Date wise Schedule</strong></div>
+        <div class="card-body">
 
-    <div class="card">
+            <p class="text-body-secondary">
+                <?= (int)$schedule_counts["total"] ?>
+                exam<?= ($schedule_counts["total"] === 1) ? "" : "s" ?>
+                for your assigned classes and subjects.
+            </p>
 
-        <h2>Date wise Schedule</h2>
+            <?php if (empty($schedule_days)): ?>
 
-        <p class="muted">
-            <?= (int)$schedule_counts["total"] ?>
-            exam<?= ($schedule_counts["total"] === 1) ? "" : "s" ?>
-            for your assigned classes and subjects.
-        </p>
+                <div class="alert alert-warning mb-0">
+                    No exams found for the selected filters.
+                </div>
 
-        <?php if (empty($schedule_days)): ?>
+            <?php else: ?>
 
-            <div class="empty">
-                No exams found for the selected filters.
-            </div>
+                <?php foreach ($schedule_days as $day_key => $day_rows): ?>
 
-        <?php else: ?>
+                    <?php $day_status = examsScheduleStatus($day_rows[0]); ?>
 
-            <?php foreach ($schedule_days as $day_key => $day_rows): ?>
+                    <div class="border rounded p-3 mb-4">
 
-                <?php $day_status = examsScheduleStatus($day_rows[0]); ?>
+                        <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
 
-                <div class="detail-block">
+                            <h5 class="mb-0">
+                                <?= ($day_key === "no-date")
+                                    ? "Date not announced"
+                                    : htmlspecialchars(examsDateLabel($day_key)) ?>
+                            </h5>
 
-                    <div class="toolbar" style="margin-top:0;">
+                            <span class="badge <?= htmlspecialchars($day_status["css"]) ?>">
+                                <?= htmlspecialchars($day_status["label"]) ?>
+                            </span>
 
-                        <h3 style="margin:0;">
-                            <?= ($day_key === "no-date")
-                                ? "Date not announced"
-                                : htmlspecialchars(examsDateLabel($day_key)) ?>
-                        </h3>
+                            <span class="text-body-secondary">
+                                <?= count($day_rows) ?>
+                                exam<?= (count($day_rows) === 1) ? "" : "s" ?>
+                            </span>
 
-                        <span class="badge <?= htmlspecialchars($day_status["css"]) ?>">
-                            <?= htmlspecialchars($day_status["label"]) ?>
-                        </span>
+                        </div>
 
-                        <span class="muted">
-                            <?= count($day_rows) ?>
-                            exam<?= (count($day_rows) === 1) ? "" : "s" ?>
-                        </span>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover align-middle mb-0">
 
-                    </div>
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Exam Name</th>
+                                        <th>Class</th>
+                                        <th>Section</th>
+                                        <th>Subject</th>
+                                        <th>Duration</th>
+                                        <th>Max Marks</th>
+                                        <th class="no-print">Action</th>
+                                    </tr>
+                                </thead>
 
-                    <table style="margin-top:12px;">
-
-                        <thead>
-                            <tr>
-                                <th>Time</th>
-                                <th>Exam Name</th>
-                                <th>Class</th>
-                                <th>Section</th>
-                                <th>Subject</th>
-                                <th>Duration</th>
-                                <th>Max Marks</th>
-                                <th class="no-print">Action</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
+                                <tbody>
 
                         <?php foreach ($day_rows as $day_row): ?>
 
@@ -443,7 +434,7 @@ $enter_marks_link = function ($row) {
                                 <td>
                                     <strong><?= htmlspecialchars((string)$day_row["exam_name"]) ?></strong>
 
-                                    <div class="muted">
+                                    <div class="small text-body-secondary">
                                         <?php if (trim((string)$day_row["term"]) !== ""): ?>
                                             <?= htmlspecialchars((string)$day_row["term"]) ?>
                                         <?php endif; ?>
@@ -463,20 +454,20 @@ $enter_marks_link = function ($row) {
 
                                 <td><?= htmlspecialchars(examsNumberLabel($day_row["max_marks"])) ?></td>
 
-                                <td class="no-print" style="white-space:nowrap;">
+                                <td class="no-print">
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <a
+                                            class="btn btn-sm btn-outline-secondary"
+                                            href="view.php?uid=<?= urlencode((string)$day_row["schedule_uid"]) ?>">
+                                            View Details
+                                        </a>
 
-                                    <a
-                                        class="btn btn-outline"
-                                        href="view.php?uid=<?= urlencode((string)$day_row["schedule_uid"]) ?>">
-                                        View Details
-                                    </a>
-
-                                    <a
-                                        class="btn btn-green"
-                                        href="<?= htmlspecialchars($enter_marks_link($day_row)) ?>">
-                                        Enter Marks
-                                    </a>
-
+                                        <a
+                                            class="btn btn-sm btn-success"
+                                            href="<?= htmlspecialchars($enter_marks_link($day_row)) ?>">
+                                            Enter Marks
+                                        </a>
+                                    </div>
                                 </td>
 
                             </tr>
@@ -486,23 +477,24 @@ $enter_marks_link = function ($row) {
                         </tbody>
 
                     </table>
+                        </div>
 
-                </div>
+                <?php endforeach; ?>
 
-            <?php endforeach; ?>
+            <?php endif; ?>
 
-        <?php endif; ?>
+        </div>
 
-        <div class="toolbar no-print">
+        <div class="d-flex flex-wrap gap-2 mt-3 no-print">
             <a class="btn btn-secondary" href="index.php">Back to Exam List</a>
-            <a class="btn btn-outline" href="../marks/index.php">📝 Enter Marks</a>
+            <a class="btn btn-outline-primary" href="../marks/index.php">📝 Enter Marks</a>
         </div>
 
     </div>
 
-<?php endif; ?>
-
 </div>
+
+<?php endif; ?>
 
 <script>
 
@@ -545,7 +537,5 @@ $enter_marks_link = function ($row) {
 
 </script>
 
-</body>
-
-</html>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 

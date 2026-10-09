@@ -209,541 +209,263 @@ foreach ($homeworks as $hw) {
 $created_banner = isset($_GET["created"]);
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'homework';
+$UI_TITLE        = 'Homework';
+$UI_CRUMBS       = [];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework</title>
+<?php if ($created_banner): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Homework created successfully.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
 
-    <style>
-
-        * { box-sizing: border-box; }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            color: #1f2937;
-        }
-
-        .header {
-            background: #ffffff;
-            padding: 20px 25px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .header h1 { margin: 0; font-size: 26px; }
-
-        .container { padding: 25px; }
-
-        .back {
-            display: inline-block;
-            margin-bottom: 20px;
-            text-decoration: none;
-            color: #2563eb;
-            font-weight: 600;
-        }
-
-        .title-box {
-            background: #ffffff;
-            padding: 22px 25px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .title-box h2 { margin: 0 0 6px; }
-        .title-box p { margin: 0; color: #6b7280; }
-
-        .btn-add {
-            display: inline-block;
-            padding: 12px 22px;
-            background: #2563eb;
-            color: #ffffff;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .btn-add:hover { background: #1d4ed8; }
-
-        .banner {
-            background: #dcfce7;
-            color: #15803d;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 18px;
-            font-weight: 600;
-        }
-
-        .error-box {
-            background: #fee2e2;
-            color: #b91c1c;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 18px;
-            font-weight: 600;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat {
-            background: #ffffff;
-            padding: 18px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .stat label { color: #6b7280; font-size: 13px; }
-        .stat .num { font-size: 26px; font-weight: bold; margin-top: 6px; }
-
-        .filter-bar {
-            background: #ffffff;
-            padding: 18px 22px;
-            border-radius: 12px;
-            margin-bottom: 18px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .filter-bar input[type="text"] {
-            flex: 1 1 250px;
-            min-width: 200px;
-            padding: 11px 14px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .filter-bar select {
-            padding: 11px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            background: #ffffff;
-            min-width: 145px;
-            outline: none;
-            cursor: pointer;
-        }
-
-        .filter-bar input:focus,
-        .filter-bar select:focus { border-color: #2563eb; }
-
-        .result-line {
-            flex-basis: 100%;
-            margin: 0;
-            color: #6b7280;
-            font-size: 13px;
-        }
-
-        .hw-card {
-            background: #ffffff;
-            padding: 22px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .hw-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .hw-head h3 { margin: 0; font-size: 18px; color: #111827; }
-
-        .badges { display: flex; gap: 8px; flex-wrap: wrap; }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 11px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .badge.open { background: #dcfce7; color: #15803d; }
-        .badge.closed { background: #e5e7eb; color: #4b5563; }
-        .badge.inactive { background: #fee2e2; color: #b91c1c; }
-        .badge.subject { background: #e7f1ff; color: #2563eb; }
-
-        .hw-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            color: #6b7280;
-            font-size: 14px;
-            margin-top: 12px;
-        }
-
-        .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-
-        .chip {
-            background: #f3f4f6;
-            border-radius: 6px;
-            padding: 6px 12px;
-            font-size: 13px;
-            color: #374151;
-        }
-
-        .hw-actions {
-            margin-top: 14px;
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .link { color: #2563eb; font-weight: 600; text-decoration: none; }
-        .link:hover { text-decoration: underline; }
-
-        .empty {
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            text-align: center;
-            color: #6b7280;
-            margin-bottom: 16px;
-        }
-
-        .empty h3 { margin: 0 0 8px; color: #4b5563; }
-
-        .no-match {
-            display: none;
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            text-align: center;
-            color: #6b7280;
-        }
-
-        .no-match h3 { margin: 0 0 8px; color: #4b5563; }
-
-    </style>
-
-</head>
-
-<body>
-
-<div class="header">
-
-    <h1>Homework</h1>
-
+<div class="card mb-4">
+    <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <strong>Homework</strong>
+        <a href="create.php" class="btn btn-primary btn-sm">+ Add Homework</a>
+    </div>
+    <div class="card-body">
+        <p class="text-body-secondary mb-1">
+            Create and manage homework for your assigned classes.
+        </p>
+        <p class="text-body-secondary mb-0">
+            Teacher:
+            <strong><?php echo htmlspecialchars($teacher_name); ?></strong>
+        </p>
+    </div>
 </div>
 
-<div class="container">
-
-    <a href="../dashboard.php" class="back">
-        ← Back to Dashboard
-    </a>
-
-
-    <?php if ($created_banner): ?>
-
-        <div class="banner">
-            Homework created successfully.
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-body-secondary small text-uppercase">Total Homework</div>
+                <div class="fs-4 fw-semibold"><?php echo $stats["total"]; ?></div>
+            </div>
         </div>
-
-    <?php endif; ?>
-
-
-    <div class="title-box">
-
-        <div>
-
-            <h2>Homework</h2>
-
-            <p>
-                Create and manage homework for your assigned classes.
-            </p>
-
-            <p style="margin-top:6px;">
-                Teacher:
-                <strong><?php echo htmlspecialchars($teacher_name); ?></strong>
-            </p>
-
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-body-secondary small text-uppercase">Open</div>
+                <div class="fs-4 fw-semibold text-success"><?php echo $stats["open"]; ?></div>
+            </div>
         </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-body-secondary small text-uppercase">Closed</div>
+                <div class="fs-4 fw-semibold"><?php echo $stats["closed"]; ?></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-body-secondary small text-uppercase">To Check</div>
+                <div class="fs-4 fw-semibold text-primary"><?php echo $stats["to_check"]; ?></div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        <a href="create.php" class="btn-add">
-            + Add Homework
-        </a>
+<?php if (count($homeworks) === 0): ?>
 
+    <div class="alert alert-warning" role="alert">
+        <strong>No Homework Yet</strong><br>
+        You have not created any homework for your classes.
     </div>
 
-
-    <div class="stats">
-
-        <div class="stat">
-            <label>Total Homework</label>
-            <div class="num"><?php echo $stats["total"]; ?></div>
-        </div>
-
-        <div class="stat">
-            <label>Open</label>
-            <div class="num"><?php echo $stats["open"]; ?></div>
-        </div>
-
-        <div class="stat">
-            <label>Closed</label>
-            <div class="num"><?php echo $stats["closed"]; ?></div>
-        </div>
-
-        <div class="stat">
-            <label>To Check</label>
-            <div class="num"><?php echo $stats["to_check"]; ?></div>
-        </div>
-
-    </div>
-
-
-    <?php if (count($homeworks) === 0): ?>
-
-        <div class="empty">
-
-            <h3>No Homework Yet</h3>
-
-            <p>
-                You have not created any homework
-                for your classes.
-            </p>
-
-        </div>
-
-    <?php else: ?>
-
-        <div class="filter-bar">
-
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Search Homework..."
-                autocomplete="off"
-            >
-
-            <select id="classFilter">
-
-                <option value="">All Classes</option>
-
-                <?php foreach ($class_options as $class_option): ?>
-
-                    <option value="<?php echo htmlspecialchars($class_option, ENT_QUOTES); ?>">
-                        <?php echo htmlspecialchars($class_option); ?>
-                    </option>
-
-                <?php endforeach; ?>
-
-            </select>
-
-            <select id="sectionFilter">
-
-                <option value="">All Sections</option>
-
-                <?php foreach ($section_options as $section_name_opt => $section_classes): ?>
-
-                    <option
-                        value="<?php echo htmlspecialchars($section_name_opt, ENT_QUOTES); ?>"
-                        data-classes="<?php echo htmlspecialchars(implode('|', $section_classes), ENT_QUOTES); ?>"
+<?php else: ?>
+    <div class="card mb-4">
+        <div class="card-header"><strong>Filter Homework</strong></div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-12 col-md-3">
+                    <label class="form-label" for="searchInput">Search</label>
+                    <input
+                        type="search"
+                        class="form-control"
+                        id="searchInput"
+                        placeholder="Search homework..."
+                        autocomplete="off"
                     >
-                        <?php echo htmlspecialchars($section_name_opt); ?>
-                    </option>
-
-                <?php endforeach; ?>
-
-            </select>
-
-            <select id="subjectFilter">
-
-                <option value="">All Subjects</option>
-
-                <?php foreach ($subject_options as $subject_option): ?>
-
-                    <option value="<?php echo htmlspecialchars($subject_option, ENT_QUOTES); ?>">
-                        <?php echo htmlspecialchars($subject_option); ?>
-                    </option>
-
-                <?php endforeach; ?>
-
-            </select>
-
-            <select id="statusFilter">
-
-                <option value="">All Status</option>
-
-                <option value="open">Open</option>
-
-                <option value="closed">Closed</option>
-
-                <option value="inactive">Inactive</option>
-
-            </select>
-
-            <p class="result-line" id="resultLine">
-                Showing
-                <?php echo count($homeworks); ?>
-                of
-                <?php echo count($homeworks); ?>
-                homework
-            </p>
-
+                </div>
+                <div class="col-6 col-md-3">
+                    <label class="form-label" for="classFilter">Class</label>
+                    <select class="form-select" id="classFilter">
+                        <option value="">All Classes</option>
+                        <?php foreach ($class_options as $class_option): ?>
+                            <option value="<?php echo htmlspecialchars($class_option, ENT_QUOTES); ?>">
+                                <?php echo htmlspecialchars($class_option); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <label class="form-label" for="sectionFilter">Section</label>
+                    <select class="form-select" id="sectionFilter">
+                        <option value="">All Sections</option>
+                        <?php foreach ($section_options as $section_name_opt => $section_classes): ?>
+                            <option
+                                value="<?php echo htmlspecialchars($section_name_opt, ENT_QUOTES); ?>"
+                                data-classes="<?php echo htmlspecialchars(implode('|', $section_classes), ENT_QUOTES); ?>"
+                            >
+                                <?php echo htmlspecialchars($section_name_opt); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <label class="form-label" for="subjectFilter">Subject</label>
+                    <select class="form-select" id="subjectFilter">
+                        <option value="">All Subjects</option>
+                        <?php foreach ($subject_options as $subject_option): ?>
+                            <option value="<?php echo htmlspecialchars($subject_option, ENT_QUOTES); ?>">
+                                <?php echo htmlspecialchars($subject_option); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <label class="form-label" for="statusFilter">Status</label>
+                    <select class="form-select" id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="open">Open</option>
+                        <option value="closed">Closed</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+            <p class="text-body-secondary small mb-0 mt-3" id="resultLine"></p>
         </div>
+    </div>
 
-        <div id="hwList">
+    <div class="row g-4">
+        <?php foreach ($homeworks as $hw):
 
-            <?php foreach ($homeworks as $hw): ?>
+            $hw_state = homeworkState($hw["status"], $hw["due_date"]);
 
-                <?php
+            $pending_students =
+                (int) $hw["total_students"]
+                - (int) $hw["submitted_count"]
+                - (int) $hw["checked_count"];
 
-                $hw_state = homeworkState($hw["status"], $hw["due_date"]);
+            if ($pending_students < 0) {
+                $pending_students = 0;
+            }
 
-                $pending_students =
-                    (int) $hw["total_students"] -
-                    (int) $hw["submitted_count"] -
-                    (int) $hw["checked_count"];
+            $hw_badge = "bg-secondary";
 
-                if ($pending_students < 0) {
-                    $pending_students = 0;
-                }
+            if ($hw_state === "open") {
+                $hw_badge = "bg-success";
+            } elseif ($hw_state === "closed") {
+                $hw_badge = "bg-primary";
+            }
 
-                ?>
-
-                <div
-                    class="hw-card"
-                    data-title="<?php echo htmlspecialchars($hw['title'], ENT_QUOTES); ?>"
-                    data-class="<?php echo htmlspecialchars($hw['class_name'], ENT_QUOTES); ?>"
-                    data-section="<?php echo htmlspecialchars($hw['section_name'], ENT_QUOTES); ?>"
-                    data-subject="<?php echo htmlspecialchars($hw['subject_name'], ENT_QUOTES); ?>"
-                    data-status="<?php echo $hw_state; ?>"
-                >
-
-                    <div class="hw-head">
-
-                        <h3>
+        ?>
+            <div
+                class="col-12 col-xl-6 hw-card"
+                data-title="<?php echo htmlspecialchars($hw["title"], ENT_QUOTES); ?>"
+                data-class="<?php echo htmlspecialchars($hw["class_name"], ENT_QUOTES); ?>"
+                data-section="<?php echo htmlspecialchars($hw["section_name"], ENT_QUOTES); ?>"
+                data-subject="<?php echo htmlspecialchars($hw["subject_name"], ENT_QUOTES); ?>"
+                data-status="<?php echo htmlspecialchars($hw_state, ENT_QUOTES); ?>"
+            >
+                <div class="card h-100">
+                    <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                        <strong class="text-truncate" title="<?php echo htmlspecialchars($hw["title"], ENT_QUOTES); ?>">
                             <?php echo htmlspecialchars($hw["title"]); ?>
-                        </h3>
+                        </strong>
+                        <span class="badge <?php echo $hw_badge; ?>">
+                            <?php echo homeworkStateLabel($hw_state); ?>
+                        </span>
+                    </div>
+                    <div class="card-body">
 
-                        <div class="badges">
-
-                            <span class="badge <?php echo $hw_state; ?>">
-                                <?php echo homeworkStateLabel($hw_state); ?>
-                            </span>
-
-                            <span class="badge subject">
+                        <div class="mb-3">
+                            <span class="badge bg-light text-dark border">
                                 <?php echo htmlspecialchars($hw["subject_name"]); ?>
                             </span>
+                        </div>
 
+                        <div class="row g-2 mb-3">
+                            <div class="col-6 col-md-4">
+                                <div class="text-body-secondary small">Class</div>
+                                <strong><?php echo htmlspecialchars($hw["class_name"]); ?></strong>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="text-body-secondary small">Section</div>
+                                <strong><?php echo htmlspecialchars($hw["section_name"]); ?></strong>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="text-body-secondary small">Students</div>
+                                <strong><?php echo (int) $hw["total_students"]; ?></strong>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="text-body-secondary small">Assigned</div>
+                                <strong><?php echo date("d M Y", strtotime($hw["assigned_date"])); ?></strong>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="text-body-secondary small">Due</div>
+                                <strong><?php echo date("d M Y", strtotime($hw["due_date"])); ?></strong>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <span class="badge bg-light text-dark border">
+                                Submitted: <?php echo (int) $hw["submitted_count"]; ?>
+                            </span>
+                            <span class="badge bg-light text-dark border">
+                                Checked: <?php echo (int) $hw["checked_count"]; ?>
+                            </span>
+                            <span class="badge bg-light text-dark border">
+                                Pending: <?php echo $pending_students; ?>
+                            </span>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <a
+                                class="btn btn-sm btn-primary"
+                                href="view.php?hw=<?php echo urlencode($hw['homework_uid']); ?>"
+                            >
+                                View Details
+                            </a>
+                            <a
+                                class="btn btn-sm btn-outline-primary"
+                                href="submissions.php?hw=<?php echo urlencode($hw['homework_uid']); ?>"
+                            >
+                                Student Submissions
+                            </a>
+                            <a
+                                class="btn btn-sm btn-outline-secondary"
+                                href="edit.php?hw=<?php echo urlencode($hw['homework_uid']); ?>"
+                            >
+                                Edit
+                            </a>
                         </div>
 
                     </div>
-
-                    <div class="hw-meta">
-
-                        <span>
-                            Class:
-                            <strong><?php echo htmlspecialchars($hw["class_name"]); ?></strong>
-                        </span>
-
-                        <span>
-                            Section:
-                            <strong><?php echo htmlspecialchars($hw["section_name"]); ?></strong>
-                        </span>
-
-                        <span>
-                            Assigned:
-                            <strong><?php echo date("d M Y", strtotime($hw["assigned_date"])); ?></strong>
-                        </span>
-
-                        <span>
-                            Due:
-                            <strong><?php echo date("d M Y", strtotime($hw["due_date"])); ?></strong>
-                        </span>
-
-                        <span>
-                            Students:
-                            <strong><?php echo (int) $hw["total_students"]; ?></strong>
-                        </span>
-
-                    </div>
-
-                    <div class="chips">
-
-                        <span class="chip">
-                            Submitted: <?php echo (int) $hw["submitted_count"]; ?>
-                        </span>
-
-                        <span class="chip">
-                            Checked: <?php echo (int) $hw["checked_count"]; ?>
-                        </span>
-
-                        <span class="chip">
-                            Pending: <?php echo $pending_students; ?>
-                        </span>
-
-                    </div>
-
-                    <div class="hw-actions">
-
-                        <a
-                            class="link"
-                            href="view.php?hw=<?php echo urlencode($hw['homework_uid']); ?>"
-                        >
-                            View Details →
-                        </a>
-
-                        <a
-                            class="link"
-                            href="submissions.php?hw=<?php echo urlencode($hw['homework_uid']); ?>"
-                        >
-                            Student Submissions →
-                        </a>
-
-                        <a
-                            class="link"
-                            href="edit.php?hw=<?php echo urlencode($hw['homework_uid']); ?>"
-                        >
-                            Edit
-                        </a>
-
-                    </div>
-
                 </div>
+            </div>
+        <?php endforeach; ?>
 
-            <?php endforeach; ?>
+    </div>
 
-        </div>
+    <div class="alert alert-warning text-center" id="noMatch" style="display: none;">
+        <strong>No Homework Found</strong><br>
+        No homework matches your search or selected filters.
+    </div>
 
-
-        <div class="no-match" id="noMatch">
-
-            <h3>No Homework Found</h3>
-
-            <p>
-                No homework matches your search
-                or selected filters.
-            </p>
-
-        </div>
-
-    <?php endif; ?>
-
-</div>
+<?php endif; ?>
 
 <script>
 
@@ -869,10 +591,5 @@ $created_banner = isset($_GET["created"]);
 
 </script>
 
-</body>
-
-</html>
-
-
-
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 

@@ -28,9 +28,10 @@ $user_id = $_SESSION["user_id"];
 $user_uid = $_SESSION["user_uid"] ?? "";
 
 $teacher_uid = "";
+$teacher_name = "";
 
 $sql_teacher = "
-    SELECT teacher_uid
+    SELECT teacher_uid, teacher_name
     FROM teachers
     WHERE user_uid = ?
     AND status = 'active'
@@ -53,6 +54,7 @@ if ($result_teacher->num_rows > 0) {
     $teacher = $result_teacher->fetch_assoc();
 
     $teacher_uid = $teacher["teacher_uid"];
+    $teacher_name = $teacher["teacher_name"] ?? "";
 
 }
 
@@ -110,207 +112,88 @@ if (!empty($teacher_uid)) {
 
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'classes';
+$UI_TITLE        = 'My Classes';
+$UI_CRUMBS       = [['label' => 'Classes', 'url' => 'index.php']];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
-<head>
+<div class="card mb-4">
+    <div class="card-header">
+        <strong>My Classes</strong>
+    </div>
+    <div class="card-body">
 
-    <meta charset="UTF-8">
+        <p class="text-body-secondary">
+            Teacher:
+            <strong><?= htmlspecialchars($teacher_name) ?></strong>
+        </p>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>My Classes</title>
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            color: #1f2937;
-        }
-
-        .header {
-            background: #ffffff;
-            padding: 20px 25px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 26px;
-        }
-
-        .container {
-            padding: 25px;
-        }
-
-        .back {
-            display: inline-block;
-            margin-bottom: 20px;
-            text-decoration: none;
-            color: #2563eb;
-            font-weight: 600;
-        }
-
-        .title-box {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-        }
-
-        .title-box h2 {
-            margin: 0 0 8px;
-        }
-
-        .title-box p {
-            margin: 0;
-            color: #6b7280;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-        }
-
-        .class-card {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 12px;
-            text-decoration: none;
-            color: #111827;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            transition: 0.2s;
-        }
-
-        .class-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.10);
-        }
-
-        .class-icon {
-            font-size: 35px;
-            margin-bottom: 15px;
-        }
-
-        .class-card h3 {
-            margin: 0 0 8px;
-        }
-
-        .class-card p {
-            margin: 5px 0;
-            color: #6b7280;
-        }
-
-        .view {
-            display: inline-block;
-            margin-top: 15px;
-            color: #2563eb;
-            font-weight: 600;
-        }
-
-        .empty {
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            text-align: center;
-            color: #6b7280;
-        }
-
-    </style>
-
-</head>
-
-<body>
-
-
-<div class="header">
-
-    <h1>My Classes</h1>
-
-</div>
-
-
-<div class="container">
-
-    <a href="../dashboard.php" class="back">
-        ← Back to Dashboard
-    </a>
-
-
-    <div class="title-box">
-
-        <h2>Assigned Classes</h2>
-
-        <p>
+        <p class="text-body-secondary">
             Classes assigned to you for teaching.
         </p>
 
-    </div>
+        <?php if (empty($classes)): ?>
 
+            <div class="alert alert-warning mb-0" role="alert">
+                No active class assignment was found for this teacher.
+            </div>
 
-    <?php if (count($classes) > 0): ?>
-
-        <div class="grid">
+        <?php else: ?>
 
             <?php foreach ($classes as $class): ?>
 
-                <a
-                    href="view.php?id=<?php echo urlencode($class['class_uid']); ?>&section=<?php echo urlencode($class['section_uid']); ?>&year=<?php echo urlencode($class['academic_year_uid']); ?>"
-                    class="class-card"
-                >
+                <div class="card mb-3">
+                    <div class="card-body">
 
-                    <div class="class-icon">
-                        📚
+                    <h5 class="card-title">Assigned Class</h5>
+
+                    <div class="mb-1 text-body-secondary">
+                        Class:
+                        <strong>
+                            <?= htmlspecialchars($class["class_name"]) ?>
+                        </strong>
                     </div>
 
-                    <h3>
-                        <?php echo htmlspecialchars($class["class_name"]); ?>
-                    </h3>
-
-                    <p>
+                    <div class="mb-1 text-body-secondary">
                         Section:
-                        <?php echo htmlspecialchars($class["section_name"]); ?>
-                    </p>
+                        <strong>
+                            <?= htmlspecialchars($class["section_name"]) ?>
+                        </strong>
+                    </div>
 
-                    <p>
+                    <div class="mb-1 text-body-secondary">
                         Academic Year:
-                        <?php echo htmlspecialchars($class["academic_year_uid"]); ?>
-                    </p>
+                        <strong>
+                            <?= htmlspecialchars($class["academic_year_uid"]) ?>
+                        </strong>
+                    </div>
 
-                    <span class="view">
-                        View Class →
-                    </span>
+                    <a
+                        class="btn btn-primary mt-2 me-2"
+                        href="view.php?id=<?= urlencode($class['class_uid']) ?>&section=<?= urlencode($class['section_uid']) ?>&year=<?= urlencode($class['academic_year_uid']) ?>"
+                    >
+                        View Class
+                    </a>
 
-                </a>
+                    <a
+                        class="btn btn-outline-primary mt-2"
+                        href="student.php?class=<?= urlencode($class['class_uid']) ?>&section=<?= urlencode($class['section_uid']) ?>&year=<?= urlencode($class['academic_year_uid']) ?>"
+                    >
+                        View Students
+                    </a>
+
+                    </div>
+                </div>
 
             <?php endforeach; ?>
 
-        </div>
+        <?php endif; ?>
 
-    <?php else: ?>
-
-        <div class="empty">
-
-            <h3>No Classes Assigned</h3>
-
-            <p>
-                No active class assignment was found for this teacher.
-            </p>
-
-        </div>
-
-    <?php endif; ?>
-
-
+    </div>
 </div>
 
-</body>
-
-</html>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

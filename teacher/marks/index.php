@@ -851,633 +851,422 @@ if ($exam_uid !== "" && isset($exam_options[$exam_uid])) {
 $has_assignments = !empty($assignments);
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-
-<meta charset="UTF-8">
-
-<title>Marks Entry</title>
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'marks';
+$UI_TITLE        = 'Marks Entry';
+$UI_CRUMBS       = [];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
 <style>
-
-body {
-    font-family: Arial, sans-serif;
-    background: #f5f6fa;
-    margin: 0;
-    padding: 30px;
-}
-
-.container {
-    max-width: 1200px;
-    margin: auto;
-}
-
-.card {
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,.08);
-}
-
-h1,
-h2,
-h3 {
-    margin-top: 0;
-}
-
-.teacher-info {
-    color: #555;
-    margin-bottom: 10px;
-}
-
-.back-link {
-    display: inline-block;
-    margin-bottom: 15px;
-    color: #007bff;
-    text-decoration: none;
-}
-
-.success {
-    background: #d4edda;
-    color: #155724;
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-}
-
-.error {
-    background: #f8d7da;
-    color: #721c24;
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-}
-
-.empty {
-    padding: 20px;
-    background: #fff3cd;
-    border-radius: 6px;
-}
-
-.filter-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 15px;
-}
-
-.filter-grid label {
-    display: block;
-    font-size: 13px;
-    font-weight: bold;
-    color: #444;
-    margin-bottom: 5px;
-}
-
-.filter-grid select,
-.filter-grid input {
-    width: 100%;
-    padding: 9px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
-    background: #fff;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th,
-td {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    text-align: left;
-    font-size: 14px;
-}
-
-th {
-    background: #f1f1f1;
-}
-
-td input[type="number"] {
-    width: 90px;
-}
-
-td input[type="text"] {
-    width: 170px;
-}
-
-td input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-}
-
-td input.is-invalid {
-    border-color: #dc3545;
-    background: #ffecec;
-}
-
-.grade-box {
-    display: inline-block;
-    min-width: 42px;
-    padding: 6px 10px;
-    background: #eef2f7;
-    border-radius: 5px;
-    font-weight: bold;
-    text-align: center;
-}
-
-.summary {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.summary-card {
-    background: #f8f9fc;
-    border: 1px solid #e6e9f0;
-    border-radius: 8px;
-    padding: 14px;
-}
-
-.summary-card span {
-    display: block;
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 6px;
-}
-
-.summary-card strong {
-    font-size: 20px;
-}
-
-.badge {
-    display: inline-block;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.badge-pending {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.badge-draft {
-    background: #cce5ff;
-    color: #004085;
-}
-
-.badge-submitted {
-    background: #d4edda;
-    color: #155724;
-}
-
-.actions {
-    margin-top: 20px;
-}
-
-button {
-    padding: 11px 20px;
-    border: none;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    margin-right: 8px;
-}
-
-.btn-draft {
-    background: #6c757d;
-}
-
-.btn-submit {
-    background: #28a745;
-}
-
-.btn-load {
-    background: #007bff;
-    margin-top: 18px;
-}
-
-.btn-reset {
-    background: #ffc107;
-    color: #212529;
-}
-
-.btn-cancel {
-    display: inline-block;
-    padding: 11px 20px;
-    background: #dc3545;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    font-size: 14px;
-}
-
-.hint {
-    color: #666;
-    font-size: 13px;
-    margin-top: 10px;
-}
-
+    .badge-pending { background-color: #fff3cd; color: #856404; }
+    .badge-draft { background-color: #cce5ff; color: #004085; }
+    .badge-submitted { background-color: #d4edda; color: #155724; }
 </style>
 
-</head>
-
-<body>
-
-<div class="container">
-
-<div class="card">
-
-<a class="back-link" href="../dashboard.php">&larr; Back to Dashboard</a>
-
-<h1>Marks Entry</h1>
-
-<div class="teacher-info">
-    Teacher:
-    <strong><?= htmlspecialchars($teacher_name) ?></strong>
-</div>
-
 <?php if ($message !== ""): ?>
-    <div class="success"><?= htmlspecialchars($message) ?></div>
+    <div class="alert alert-success" role="alert">
+        <?= htmlspecialchars($message) ?>
+    </div>
 <?php endif; ?>
 
 <?php if ($error !== ""): ?>
-    <div class="error"><?= htmlspecialchars($error) ?></div>
+    <div class="alert alert-danger" role="alert">
+        <?= htmlspecialchars($error) ?>
+    </div>
 <?php endif; ?>
 
-<?php if (!$has_assignments): ?>
+<div class="card mb-4">
+    <div class="card-header"><strong>Marks Entry</strong></div>
+    <div class="card-body">
 
-    <div class="empty">
-        No class or subject has been assigned to you yet.
-        Please contact the school administrator.
+        <p class="text-body-secondary">
+            Teacher:
+            <strong><?= htmlspecialchars($teacher_name) ?></strong>
+        </p>
+
+        <?php if (!$has_assignments): ?>
+
+            <div class="alert alert-warning mb-0" role="alert">
+                No class or subject has been assigned to you yet.
+                Please contact the school administrator.
+            </div>
+
+        <?php else: ?>
+
+            <form method="post" action="index.php" id="filterForm">
+
+                <?php echo csrfField(); ?>
+
+                <div class="row g-3">
+
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <label class="form-label" for="academic_year_uid">Academic Session</label>
+                        <select class="form-select" name="academic_year_uid" id="academic_year_uid" required>
+                            <option value="">Select Session</option>
+                            <?php foreach ($year_options as $year_uid => $year_name): ?>
+                                <option
+                                    value="<?= htmlspecialchars($year_uid) ?>"
+                                    <?= ($academic_year_uid === $year_uid) ? "selected" : "" ?>>
+                                    <?= htmlspecialchars($year_name) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <label class="form-label" for="class_uid">Class</label>
+                        <select class="form-select" name="class_uid" id="class_uid" required>
+                            <option value="">Select Class</option>
+                            <?php foreach ($class_options as $opt_class_uid => $opt_class_name): ?>
+                                <option
+                                    value="<?= htmlspecialchars($opt_class_uid) ?>"
+                                    <?= ($class_uid === $opt_class_uid) ? "selected" : "" ?>>
+                                    <?= htmlspecialchars($opt_class_name) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <label class="form-label" for="section_uid">Section</label>
+                        <select class="form-select" name="section_uid" id="section_uid" required>
+                            <option value="">Select Section</option>
+                            <?php foreach ($section_options as $opt_section_uid => $opt_section_name): ?>
+                                <option
+                                    value="<?= htmlspecialchars($opt_section_uid) ?>"
+                                    <?= ($section_uid === $opt_section_uid) ? "selected" : "" ?>>
+                                    <?= htmlspecialchars($opt_section_name) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <label class="form-label" for="subject_uid">Subject</label>
+                        <select class="form-select" name="subject_uid" id="subject_uid" required>
+                            <option value="">Select Subject</option>
+                            <?php foreach ($subject_options as $opt_subject_uid => $opt_subject_name): ?>
+                                <option
+                                    value="<?= htmlspecialchars($opt_subject_uid) ?>"
+                                    <?= ($subject_uid === $opt_subject_uid) ? "selected" : "" ?>>
+                                    <?= htmlspecialchars($opt_subject_name) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <label class="form-label" for="term">Term</label>
+                        <select class="form-select" name="term" id="term">
+                            <option value="">All Terms</option>
+                            <?php foreach ($term_options as $opt_term): ?>
+                                <option
+                                    value="<?= htmlspecialchars($opt_term) ?>"
+                                    <?= ($term === $opt_term) ? "selected" : "" ?>>
+                                    <?= htmlspecialchars($opt_term) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <label class="form-label" for="exam_uid">Exam / Assessment</label>
+                        <select class="form-select" name="exam_uid" id="exam_uid" required>
+                            <option value="">Select Exam</option>
+                            <?php foreach ($exam_options as $opt_exam): ?>
+                                <option
+                                    value="<?= htmlspecialchars($opt_exam["exam_uid"]) ?>"
+                                    data-year="<?= htmlspecialchars($opt_exam["academic_year_uid"]) ?>"
+                                    data-term="<?= htmlspecialchars($opt_exam["term"]) ?>"
+                                    <?= ($exam_uid === $opt_exam["exam_uid"]) ? "selected" : "" ?>>
+                                    <?= htmlspecialchars($opt_exam["exam_name"]) ?>
+                                    <?= ($opt_exam["term"] !== "") ? " (" . htmlspecialchars($opt_exam["term"]) . ")" : "" ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <label class="form-label" for="max_marks">Maximum Marks</label>
+                        <input
+                            type="number"
+                            class="form-control"
+                            name="max_marks"
+                            id="max_marks"
+                            min="1"
+                            max="1000"
+                            step="0.01"
+                            value="<?= htmlspecialchars($max_marks_raw) ?>"
+                            required>
+                    </div>
+
+                </div>
+
+                <div class="mt-3 d-flex flex-wrap gap-2">
+                    <button type="submit" name="action" value="load" class="btn btn-primary">
+                        Load Students
+                    </button>
+                    <a class="btn btn-outline-secondary" href="index.php">Clear Filters</a>
+                </div>
+
+                <p class="form-text mt-2 mb-0">
+                    Only the classes and subjects assigned to you are listed here.
+                </p>
+
+            </form>
+
+        <?php endif; ?>
+
     </div>
-
-<?php else: ?>
-
-<form method="post" action="index.php" id="filterForm">
-
-    <?php echo csrfField(); ?>
-
-    <div class="filter-grid">
-
-        <div>
-            <label for="academic_year_uid">Academic Session</label>
-            <select name="academic_year_uid" id="academic_year_uid" required>
-                <option value="">Select Session</option>
-                <?php foreach ($year_options as $year_uid => $year_name): ?>
-                    <option
-                        value="<?= htmlspecialchars($year_uid) ?>"
-                        <?= ($academic_year_uid === $year_uid) ? "selected" : "" ?>>
-                        <?= htmlspecialchars($year_name) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <div>
-            <label for="class_uid">Class</label>
-            <select name="class_uid" id="class_uid" required>
-                <option value="">Select Class</option>
-                <?php foreach ($class_options as $opt_class_uid => $opt_class_name): ?>
-                    <option
-                        value="<?= htmlspecialchars($opt_class_uid) ?>"
-                        <?= ($class_uid === $opt_class_uid) ? "selected" : "" ?>>
-                        <?= htmlspecialchars($opt_class_name) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <div>
-            <label for="section_uid">Section</label>
-            <select name="section_uid" id="section_uid" required>
-                <option value="">Select Section</option>
-                <?php foreach ($section_options as $opt_section_uid => $opt_section_name): ?>
-                    <option
-                        value="<?= htmlspecialchars($opt_section_uid) ?>"
-                        <?= ($section_uid === $opt_section_uid) ? "selected" : "" ?>>
-                        <?= htmlspecialchars($opt_section_name) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <div>
-            <label for="subject_uid">Subject</label>
-            <select name="subject_uid" id="subject_uid" required>
-                <option value="">Select Subject</option>
-                <?php foreach ($subject_options as $opt_subject_uid => $opt_subject_name): ?>
-                    <option
-                        value="<?= htmlspecialchars($opt_subject_uid) ?>"
-                        <?= ($subject_uid === $opt_subject_uid) ? "selected" : "" ?>>
-                        <?= htmlspecialchars($opt_subject_name) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <div>
-            <label for="term">Term</label>
-            <select name="term" id="term">
-                <option value="">All Terms</option>
-                <?php foreach ($term_options as $opt_term): ?>
-                    <option
-                        value="<?= htmlspecialchars($opt_term) ?>"
-                        <?= ($term === $opt_term) ? "selected" : "" ?>>
-                        <?= htmlspecialchars($opt_term) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <div>
-            <label for="exam_uid">Exam / Assessment</label>
-            <select name="exam_uid" id="exam_uid" required>
-                <option value="">Select Exam</option>
-                <?php foreach ($exam_options as $opt_exam): ?>
-                    <option
-                        value="<?= htmlspecialchars($opt_exam["exam_uid"]) ?>"
-                        data-year="<?= htmlspecialchars($opt_exam["academic_year_uid"]) ?>"
-                        data-term="<?= htmlspecialchars($opt_exam["term"]) ?>"
-                        <?= ($exam_uid === $opt_exam["exam_uid"]) ? "selected" : "" ?>>
-                        <?= htmlspecialchars($opt_exam["exam_name"]) ?>
-                        <?= ($opt_exam["term"] !== "") ? " (" . htmlspecialchars($opt_exam["term"]) . ")" : "" ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <div>
-            <label for="max_marks">Maximum Marks</label>
-            <input
-                type="number"
-                name="max_marks"
-                id="max_marks"
-                min="1"
-                max="1000"
-                step="0.01"
-                value="<?= htmlspecialchars($max_marks_raw) ?>"
-                required>
-        </div>
-
-    </div>
-
-    <button type="submit" name="action" value="load" class="btn-load">
-        Load Students
-    </button>
-
-    <a class="btn-cancel" href="index.php">Clear Filters</a>
-
-    <div class="hint">
-        Only the classes and subjects assigned to you are listed here.
-    </div>
-
-</form>
-
-<?php endif; ?>
-
 </div>
 
 <?php if ($loaded): ?>
 
-<div class="card">
+    <div class="card mb-4">
+        <div class="card-header"><strong>Enter Marks</strong></div>
+        <div class="card-body">
 
-    <h2>Enter Marks</h2>
+            <p class="text-body-secondary mb-1">
+                Class:
+                <strong><?= htmlspecialchars($class_options[$class_uid] ?? $class_uid) ?></strong>
+                &nbsp;|&nbsp;
+                Section:
+                <strong><?= htmlspecialchars($section_options[$section_uid] ?? $section_uid) ?></strong>
+                &nbsp;|&nbsp;
+                Subject:
+                <strong><?= htmlspecialchars($subject_options[$subject_uid] ?? $subject_uid) ?></strong>
+            </p>
 
-    <div class="teacher-info">
-        Class:
-        <strong><?= htmlspecialchars($class_options[$class_uid] ?? $class_uid) ?></strong>
-        &nbsp;|&nbsp;
-        Section:
-        <strong><?= htmlspecialchars($section_options[$section_uid] ?? $section_uid) ?></strong>
-        &nbsp;|&nbsp;
-        Subject:
-        <strong><?= htmlspecialchars($subject_options[$subject_uid] ?? $subject_uid) ?></strong>
+            <p class="text-body-secondary">
+                Exam:
+                <strong><?= htmlspecialchars($exam_options[$exam_uid]["exam_name"] ?? $exam_uid) ?></strong>
+                <?php if ($selected_exam_term !== ""): ?>
+                    &nbsp;|&nbsp; Term:
+                    <strong><?= htmlspecialchars($selected_exam_term) ?></strong>
+                <?php endif; ?>
+                &nbsp;|&nbsp;
+                Session:
+                <strong><?= htmlspecialchars($year_options[$academic_year_uid] ?? $academic_year_uid) ?></strong>
+                &nbsp;|&nbsp;
+                Max Marks:
+                <strong><?= htmlspecialchars((string)$max_marks) ?></strong>
+            </p>
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-6 col-md-4 col-xl-2">
+                    <div class="border rounded p-3 bg-light h-100">
+                        <div class="text-body-secondary small">Total Students</div>
+                        <div class="fs-5 fw-semibold" id="sum_total"><?= (int)$total_students ?></div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4 col-xl-2">
+                    <div class="border rounded p-3 bg-light h-100">
+                        <div class="text-body-secondary small">Marks Entered</div>
+                        <div class="fs-5 fw-semibold" id="sum_entered"><?= (int)$marks_entered ?></div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4 col-xl-2">
+                    <div class="border rounded p-3 bg-light h-100">
+                        <div class="text-body-secondary small">Pending</div>
+                        <div class="fs-5 fw-semibold" id="sum_pending"><?= (int)$marks_pending ?></div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4 col-xl-2">
+                    <div class="border rounded p-3 bg-light h-100">
+                        <div class="text-body-secondary small">Absent</div>
+                        <div class="fs-5 fw-semibold" id="sum_absent"><?= (int)$absent_count ?></div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4 col-xl-2">
+                    <div class="border rounded p-3 bg-light h-100">
+                        <div class="text-body-secondary small">Exempted</div>
+                        <div class="fs-5 fw-semibold" id="sum_exempt"><?= (int)$exempt_count ?></div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4 col-xl-2">
+                    <div class="border rounded p-3 bg-light h-100">
+                        <div class="text-body-secondary small">Status</div>
+                        <div class="fs-5 fw-semibold" id="sum_status"><?= htmlspecialchars($submitted_label) ?></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <form method="post" action="index.php" id="marksForm">
+
+                <?php echo csrfField(); ?>
+
+                <input type="hidden" name="class_uid" value="<?= htmlspecialchars($class_uid) ?>">
+                <input type="hidden" name="section_uid" value="<?= htmlspecialchars($section_uid) ?>">
+                <input type="hidden" name="subject_uid" value="<?= htmlspecialchars($subject_uid) ?>">
+                <input type="hidden" name="exam_uid" value="<?= htmlspecialchars($exam_uid) ?>">
+                <input type="hidden" name="academic_year_uid" value="<?= htmlspecialchars($academic_year_uid) ?>">
+                <input type="hidden" name="term" value="<?= htmlspecialchars($term) ?>">
+                <input type="hidden" name="max_marks" value="<?= htmlspecialchars((string)$max_marks) ?>">
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Roll No</th>
+                                <th>Admission No</th>
+                                <th>Student Name</th>
+                                <th>Marks (out of <?= htmlspecialchars((string)$max_marks) ?>)</th>
+                                <th>Grade</th>
+                                <th>Absent</th>
+                                <th>Exempted</th>
+                                <th>Remarks</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <?php $serial = 1; ?>
+
+                            <?php foreach ($rows as $row): ?>
+
+                                <?php
+                                $row_uid = (string)$row["student_uid"];
+
+                                $badge_class = "badge-pending";
+                                $badge_text  = "Pending";
+
+                                if ($row["entry_status"] === "draft") {
+                                    $badge_class = "badge-draft";
+                                    $badge_text  = "Draft";
+                                } elseif ($row["entry_status"] === "submitted") {
+                                    $badge_class = "badge-submitted";
+                                    $badge_text  = "Submitted";
+                                }
+                                ?>
+
+                                <tr class="student-row"
+                                    data-uid="<?= htmlspecialchars($row_uid) ?>">
+
+                                    <td><?= (int)$serial ?></td>
+
+                                    <td><?= htmlspecialchars($row["roll_no"]) ?></td>
+
+                                    <td><?= htmlspecialchars($row["admission_no"]) ?></td>
+
+                                    <td><?= htmlspecialchars($row["student_name"]) ?></td>
+
+                                    <td>
+                                        <input
+                                            type="number"
+                                            class="marks-input form-control form-control-sm"
+                                            style="max-width: 120px;"
+                                            name="marks[<?= htmlspecialchars($row_uid) ?>]"
+                                            id="marks_<?= htmlspecialchars($row_uid) ?>"
+                                            data-max="<?= htmlspecialchars((string)$row["max_marks"]) ?>"
+                                            min="0"
+                                            max="<?= htmlspecialchars((string)$row["max_marks"]) ?>"
+                                            step="0.01"
+                                            value="<?= htmlspecialchars($row["marks"]) ?>"
+                                            <?= ($row["is_absent"] || $row["is_exempt"]) ? "disabled" : "" ?>>
+                                    </td>
+
+                                    <td>
+                                        <span
+                                            class="badge bg-light text-dark border"
+                                            id="grade_<?= htmlspecialchars($row_uid) ?>">
+                                            <?= htmlspecialchars($row["grade"]) ?>
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            class="absent-box form-check-input"
+                                            name="absent[<?= htmlspecialchars($row_uid) ?>]"
+                                            id="absent_<?= htmlspecialchars($row_uid) ?>"
+                                            value="1"
+                                            <?= $row["is_absent"] ? "checked" : "" ?>>
+                                    </td>
+
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            class="exempt-box form-check-input"
+                                            name="exempt[<?= htmlspecialchars($row_uid) ?>]"
+                                            id="exempt_<?= htmlspecialchars($row_uid) ?>"
+                                            value="1"
+                                            <?= $row["is_exempt"] ? "checked" : "" ?>>
+                                    </td>
+
+                                    <td>
+                                        <input
+                                            type="text"
+                                            class="remarks-input form-control form-control-sm"
+                                            style="max-width: 200px;"
+                                            name="remarks[<?= htmlspecialchars($row_uid) ?>]"
+                                            id="remarks_<?= htmlspecialchars($row_uid) ?>"
+                                            maxlength="255"
+                                            value="<?= htmlspecialchars($row["remarks"]) ?>">
+                                    </td>
+
+                                    <td>
+                                        <span
+                                            class="badge <?= $badge_class ?>"
+                                            id="status_<?= htmlspecialchars($row_uid) ?>">
+                                            <?= $badge_text ?>
+                                        </span>
+                                    </td>
+
+                                </tr>
+
+                                <?php $serial++; ?>
+
+                            <?php endforeach; ?>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-3 d-flex flex-wrap gap-2">
+
+                    <button type="submit" name="action" value="draft" class="btn btn-secondary">
+                        Save Draft
+                    </button>
+
+                    <button
+                        type="submit"
+                        name="action"
+                        value="submit"
+                        class="btn btn-success"
+                        id="submitButton">
+                        Save &amp; Submit
+                    </button>
+
+                    <button type="button" class="btn btn-outline-warning" id="resetButton">
+                        Reset
+                    </button>
+
+                    <a class="btn btn-outline-secondary" href="index.php">Cancel</a>
+
+                </div>
+
+                <p class="form-text mt-2 mb-0">
+                    Enter marks out of the maximum marks shown above.
+                    Tick <strong>Absent</strong> or <strong>Exempted</strong> to disable the marks box.
+                    Grade is calculated automatically from the percentage.
+                </p>
+
+            </form>
+
+        </div>
     </div>
-
-    <div class="teacher-info">
-        Exam:
-        <strong><?= htmlspecialchars($exam_options[$exam_uid]["exam_name"] ?? $exam_uid) ?></strong>
-        <?php if ($selected_exam_term !== ""): ?>
-            &nbsp;|&nbsp; Term:
-            <strong><?= htmlspecialchars($selected_exam_term) ?></strong>
-        <?php endif; ?>
-        &nbsp;|&nbsp;
-        Session:
-        <strong><?= htmlspecialchars($year_options[$academic_year_uid] ?? $academic_year_uid) ?></strong>
-        &nbsp;|&nbsp;
-        Max Marks:
-        <strong><?= htmlspecialchars((string)$max_marks) ?></strong>
-    </div>
-
-    <div class="summary">
-
-        <div class="summary-card">
-            <span>Total Students</span>
-            <strong id="sum_total"><?= (int)$total_students ?></strong>
-        </div>
-
-        <div class="summary-card">
-            <span>Marks Entered</span>
-            <strong id="sum_entered"><?= (int)$marks_entered ?></strong>
-        </div>
-
-        <div class="summary-card">
-            <span>Pending</span>
-            <strong id="sum_pending"><?= (int)$marks_pending ?></strong>
-        </div>
-
-        <div class="summary-card">
-            <span>Absent</span>
-            <strong id="sum_absent"><?= (int)$absent_count ?></strong>
-        </div>
-
-        <div class="summary-card">
-            <span>Exempted</span>
-            <strong id="sum_exempt"><?= (int)$exempt_count ?></strong>
-        </div>
-
-        <div class="summary-card">
-            <span>Status</span>
-            <strong id="sum_status"><?= htmlspecialchars($submitted_label) ?></strong>
-        </div>
-
-    </div>
-
-    <form method="post" action="index.php" id="marksForm">
-
-        <?php echo csrfField(); ?>
-
-        <input type="hidden" name="class_uid" value="<?= htmlspecialchars($class_uid) ?>">
-        <input type="hidden" name="section_uid" value="<?= htmlspecialchars($section_uid) ?>">
-        <input type="hidden" name="subject_uid" value="<?= htmlspecialchars($subject_uid) ?>">
-        <input type="hidden" name="exam_uid" value="<?= htmlspecialchars($exam_uid) ?>">
-        <input type="hidden" name="academic_year_uid" value="<?= htmlspecialchars($academic_year_uid) ?>">
-        <input type="hidden" name="term" value="<?= htmlspecialchars($term) ?>">
-        <input type="hidden" name="max_marks" value="<?= htmlspecialchars((string)$max_marks) ?>">
-
-        <table>
-
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Roll No</th>
-                    <th>Admission No</th>
-                    <th>Student Name</th>
-                    <th>Marks (out of <?= htmlspecialchars((string)$max_marks) ?>)</th>
-                    <th>Grade</th>
-                    <th>Absent</th>
-                    <th>Exempted</th>
-                    <th>Remarks</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-
-            <tbody>
-
-                <?php $serial = 1; ?>
-
-                <?php foreach ($rows as $row): ?>
-
-                    <?php
-                    $row_uid = (string)$row["student_uid"];
-
-                    $badge_class = "badge-pending";
-                    $badge_text  = "Pending";
-
-                    if ($row["entry_status"] === "draft") {
-                        $badge_class = "badge-draft";
-                        $badge_text  = "Draft";
-                    } elseif ($row["entry_status"] === "submitted") {
-                        $badge_class = "badge-submitted";
-                        $badge_text  = "Submitted";
-                    }
-                    ?>
-
-                    <tr class="student-row"
-                        data-uid="<?= htmlspecialchars($row_uid) ?>">
-
-                        <td><?= (int)$serial ?></td>
-
-                        <td><?= htmlspecialchars($row["roll_no"]) ?></td>
-
-                        <td><?= htmlspecialchars($row["admission_no"]) ?></td>
-
-                        <td><?= htmlspecialchars($row["student_name"]) ?></td>
-
-                        <td>
-                            <input
-                                type="number"
-                                name="marks[<?= htmlspecialchars($row_uid) ?>]"
-                                id="marks_<?= htmlspecialchars($row_uid) ?>"
-                                class="marks-input"
-                                data-max="<?= htmlspecialchars((string)$row["max_marks"]) ?>"
-                                min="0"
-                                max="<?= htmlspecialchars((string)$row["max_marks"]) ?>"
-                                step="0.01"
-                                value="<?= htmlspecialchars($row["marks"]) ?>"
-                                <?= ($row["is_absent"] || $row["is_exempt"]) ? "disabled" : "" ?>>
-                        </td>
-
-                        <td>
-                            <span
-                                class="grade-box"
-                                id="grade_<?= htmlspecialchars($row_uid) ?>">
-                                <?= htmlspecialchars($row["grade"]) ?>
-                            </span>
-                        </td>
-
-                        <td>
-                            <input
-                                type="checkbox"
-                                name="absent[<?= htmlspecialchars($row_uid) ?>]"
-                                id="absent_<?= htmlspecialchars($row_uid) ?>"
-                                class="absent-box"
-                                value="1"
-                                <?= $row["is_absent"] ? "checked" : "" ?>>
-                        </td>
-
-                        <td>
-                            <input
-                                type="checkbox"
-                                name="exempt[<?= htmlspecialchars($row_uid) ?>]"
-                                id="exempt_<?= htmlspecialchars($row_uid) ?>"
-                                class="exempt-box"
-                                value="1"
-                                <?= $row["is_exempt"] ? "checked" : "" ?>>
-                        </td>
-
-                        <td>
-                            <input
-                                type="text"
-                                name="remarks[<?= htmlspecialchars($row_uid) ?>]"
-                                id="remarks_<?= htmlspecialchars($row_uid) ?>"
-                                class="remarks-input"
-                                maxlength="255"
-                                value="<?= htmlspecialchars($row["remarks"]) ?>">
-                        </td>
-
-                        <td>
-                            <span
-                                class="badge <?= $badge_class ?>"
-                                id="status_<?= htmlspecialchars($row_uid) ?>">
-                                <?= $badge_text ?>
-                            </span>
-                        </td>
-
-                    </tr>
-
-                    <?php $serial++; ?>
-
-                <?php endforeach; ?>
-
-            </tbody>
-
-        </table>
-
-        <div class="actions">
-
-            <button type="submit" name="action" value="draft" class="btn-draft">
-                Save Draft
-            </button>
-
-            <button
-                type="submit"
-                name="action"
-                value="submit"
-                class="btn-submit"
-                id="submitButton">
-                Save &amp; Submit
-            </button>
-
-            <button type="button" class="btn-reset" id="resetButton">
-                Reset
-            </button>
-
-            <a class="btn-cancel" href="index.php">Cancel</a>
-
-        </div>
-
-        <div class="hint">
-            Enter marks out of the maximum marks shown above.
-            Tick <strong>Absent</strong> or <strong>Exempted</strong> to disable the marks box.
-            Grade is calculated automatically from the percentage.
-        </div>
-
-    </form>
-
-</div>
 
 <?php endif; ?>
 
@@ -1771,14 +1560,4 @@ button {
 
 </script>
 
-</div>
-
-</body>
-
-</html>
-
-
-
-
-
-
+<?php include __DIR__ . '/../includes/footer.php'; ?>

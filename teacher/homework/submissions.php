@@ -14,6 +14,7 @@ if (!isset($_SESSION["user_id"])) {
 $user_uid = $_SESSION["user_uid"] ?? "";
 
 $teacher_uid = "";
+$teacher_name = "";
 
 $sql_teacher = "
     SELECT teacher_uid, teacher_name
@@ -37,6 +38,7 @@ $result_teacher = $stmt_teacher->get_result();
 if ($result_teacher->num_rows > 0) {
     $teacher = $result_teacher->fetch_assoc();
     $teacher_uid = $teacher["teacher_uid"];
+    $teacher_name = $teacher["teacher_name"] ?? "";
 }
 
 $stmt_teacher->close();
@@ -169,226 +171,75 @@ foreach ($rows as $row) {
 }
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'homework';
+$UI_TITLE        = 'Student Submissions';
+$UI_CRUMBS       = [['label' => 'Homework', 'url' => 'index.php']];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Submissions</title>
+<a
+    class="btn btn-outline-secondary btn-sm mb-3"
+    href="view.php?hw=<?php echo urlencode($homework["homework_uid"]); ?>"
+>
+    &larr; Back to Homework Details
+</a>
 
-    <style>
+<div class="card mb-4">
+    <div class="card-header"><strong>Student Submissions</strong></div>
+    <div class="card-body">
 
-        * { box-sizing: border-box; }
+        <h5 class="mb-1">
+            <?php echo htmlspecialchars($homework["title"]); ?>
+        </h5>
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            color: #1f2937;
-        }
+        <p class="text-body-secondary">
+            Class
+            <?php echo htmlspecialchars($homework["class_uid"]); ?>
+            &bull; Section
+            <?php echo htmlspecialchars($homework["section_uid"]); ?>
+            &bull; Due:
+            <?php echo date("d M Y", strtotime($homework["due_date"])); ?>
+        </p>
 
-        .header {
-            background: #ffffff;
-            padding: 20px 25px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .header h1 { margin: 0; font-size: 26px; }
-
-        .container { padding: 25px; }
-
-        .back {
-            display: inline-block;
-            margin-bottom: 20px;
-            text-decoration: none;
-            color: #2563eb;
-            font-weight: 600;
-        }
-
-        .title-box {
-            background: #ffffff;
-            padding: 22px 25px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .title-box h2 { margin: 0 0 6px; }
-        .title-box p { margin: 4px 0 0; color: #6b7280; font-size: 14px; }
-
-        .summary {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 14px;
-        }
-
-        .sum-chip {
-            background: #f3f4f6;
-            border-radius: 8px;
-            padding: 8px 14px;
-            font-size: 13px;
-            color: #374151;
-        }
-
-        .sum-chip strong { color: #111827; }
-
-        .table-card {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 8px 22px 18px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 750px;
-        }
-
-        th, td {
-            padding: 13px 10px;
-            border-bottom: 1px solid #eef0f2;
-            text-align: left;
-            font-size: 14px;
-        }
-
-        th {
-            background: #f8f9fa;
-            color: #4b5563;
-            font-size: 13px;
-        }
-
-        tr:last-child td { border-bottom: none; }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 11px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .badge.pending { background: #fef3c7; color: #b45309; }
-        .badge.submitted { background: #dbeafe; color: #1d4ed8; }
-        .badge.checked { background: #dcfce7; color: #15803d; }
-        .badge.late { background: #fee2e2; color: #b91c1c; }
-
-        .link {
-            color: #2563eb;
-            font-weight: 600;
-            text-decoration: none;
-            white-space: nowrap;
-        }
-
-        .link:hover { text-decoration: underline; }
-
-        .muted { color: #9ca3af; }
-
-        .empty {
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            text-align: center;
-            color: #6b7280;
-        }
-
-        .empty h3 { margin: 0 0 8px; color: #4b5563; }
-
-    </style>
-
-</head>
-
-<body>
-
-<div class="header">
-
-    <h1>Student Submissions</h1>
-
-</div>
-
-<div class="container">
-
-    <a
-        class="back"
-        href="view.php?hw=<?php echo urlencode($homework["homework_uid"]); ?>"
-    >
-        ← Back to Homework Details
-    </a>
-
-
-    <div class="title-box">
-
-        <div>
-
-            <h2>
-                <?php echo htmlspecialchars($homework["title"]); ?>
-            </h2>
-
-            <p>
-                Class
-                <?php echo htmlspecialchars($homework["class_uid"]); ?>
-                &nbsp;•&nbsp;
-                Section
-                <?php echo htmlspecialchars($homework["section_uid"]); ?>
-                &nbsp;•&nbsp;
-                Due:
-                <?php echo date("d M Y", strtotime($homework["due_date"])); ?>
-            </p>
-
-            <div class="summary">
-
-                <span class="sum-chip">
-                    Total: <strong><?php echo $summary["total"]; ?></strong>
-                </span>
-
-                <span class="sum-chip">
-                    Pending: <strong><?php echo $summary["pending"]; ?></strong>
-                </span>
-
-                <span class="sum-chip">
-                    Submitted: <strong><?php echo $summary["submitted"]; ?></strong>
-                </span>
-
-                <span class="sum-chip">
-                    Checked: <strong><?php echo $summary["checked"]; ?></strong>
-                </span>
-
-                <span class="sum-chip">
-                    Late: <strong><?php echo $summary["late"]; ?></strong>
-                </span>
-
-            </div>
-
+        <div class="d-flex flex-wrap gap-2">
+            <span class="badge bg-light text-dark border">
+                Total: <strong><?php echo $summary["total"]; ?></strong>
+            </span>
+            <span class="badge bg-warning text-dark">
+                Pending: <strong><?php echo $summary["pending"]; ?></strong>
+            </span>
+            <span class="badge bg-info text-dark">
+                Submitted: <strong><?php echo $summary["submitted"]; ?></strong>
+            </span>
+            <span class="badge bg-success">
+                Checked: <strong><?php echo $summary["checked"]; ?></strong>
+            </span>
+            <span class="badge bg-danger">
+                Late: <strong><?php echo $summary["late"]; ?></strong>
+            </span>
         </div>
 
     </div>
+</div>
 
+<?php if (count($rows) === 0): ?>
 
-    <?php if (count($rows) === 0): ?>
+    <div class="alert alert-warning" role="alert">
+        <strong>No Students Found</strong><br>
+        No active students were found in this class.
+    </div>
 
-        <div class="empty">
+<?php else: ?>
 
-            <h3>No Students Found</h3>
-
-            <p>
-                No active students were found
-                in this class.
-            </p>
-
-        </div>
-
-    <?php else: ?>
-
-        <div class="table-card">
-
-            <table>
-
-                <thead>
-
+    <div class="card mb-4">
+        <div class="card-header"><strong>Student List</strong></div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-light">
                     <tr>
                         <th>Roll No</th>
                         <th>Student</th>
@@ -398,11 +249,8 @@ foreach ($rows as $row) {
                         <th>Marks</th>
                         <th>Action</th>
                     </tr>
-
                 </thead>
-
                 <tbody>
-
                     <?php foreach ($rows as $row): ?>
 
                         <?php
@@ -418,6 +266,14 @@ foreach ($rows as $row) {
                                 strtotime($homework["due_date"])
                         ) {
                             $is_late_row = true;
+                        }
+
+                        $row_badge = "bg-warning text-dark";
+
+                        if ($sub_state === "submitted") {
+                            $row_badge = "bg-info text-dark";
+                        } elseif ($sub_state === "checked") {
+                            $row_badge = "bg-success";
                         }
 
                         ?>
@@ -439,26 +295,20 @@ foreach ($rows as $row) {
                             </td>
 
                             <td>
-
-                                <span class="badge <?php echo $sub_state; ?>">
-                                    <?php
-                                    echo ucfirst($sub_state);
-                                    ?>
+                                <span class="badge <?php echo $row_badge; ?>">
+                                    <?php echo ucfirst($sub_state); ?>
                                 </span>
 
                                 <?php if ($is_late_row): ?>
-
-                                    <span class="badge late">Late</span>
-
+                                    <span class="badge bg-danger">Late</span>
                                 <?php endif; ?>
-
                             </td>
 
                             <td>
                                 <?php if (!empty($row["submitted_date"])): ?>
                                     <?php echo date("d M Y", strtotime($row["submitted_date"])); ?>
                                 <?php else: ?>
-                                    <span class="muted">-</span>
+                                    <span class="text-body-secondary">-</span>
                                 <?php endif; ?>
                             </td>
 
@@ -476,19 +326,17 @@ foreach ($rows as $row) {
                                     );
                                     ?>
                                 <?php else: ?>
-                                    <span class="muted">-</span>
+                                    <span class="text-body-secondary">-</span>
                                 <?php endif; ?>
                             </td>
 
                             <td>
-
                                 <a
-                                    class="link"
+                                    class="btn btn-sm btn-outline-primary"
                                     href="check.php?hw=<?php echo urlencode($homework["homework_uid"]); ?>&student=<?php echo urlencode($row["student_uid"]); ?>"
                                 >
-                                    View / Check →
+                                    View / Check
                                 </a>
-
                             </td>
 
                         </tr>
@@ -500,13 +348,9 @@ foreach ($rows as $row) {
             </table>
 
         </div>
+    </div>
 
-    <?php endif; ?>
+<?php endif; ?>
 
-</div>
-
-</body>
-
-</html>
-
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 
