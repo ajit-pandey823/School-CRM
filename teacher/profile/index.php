@@ -62,46 +62,57 @@ $show_ok  = (isset($ok_messages[$flash_ok]))  ? $ok_messages[$flash_ok]  : "";
 $show_err = (isset($err_messages[$flash_err])) ? $err_messages[$flash_err] : "";
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>My Profile</title>
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'profile';
+$UI_TITLE        = 'My Profile';
+$UI_CRUMBS       = [];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
 <style>
-<?= profileModuleStyles() ?>
+    .profile-head { display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
+    .avatar { width:110px; height:110px; border-radius:50%; background:#0d6efd; color:#fff; display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:bold; overflow:hidden; flex-shrink:0; }
+    .avatar img { width:100%; height:100%; object-fit:cover; }
+    .head-info { flex:1; min-width:220px; }
+    .head-sub { color:#555; font-size:14px; margin-bottom:10px; }
+    .detail-item { background:#fff; border:1px solid #e6e9f0; border-radius:8px; padding:14px; height:100%; color:#000; }
+    .detail-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:14px; }
+    .full-width { grid-column:1 / -1; }
+    .detail-item span { display:block; font-size:12px; color:#000; text-transform:uppercase; letter-spacing:.3px; margin-bottom:5px; }
+    .detail-item strong { font-size:14px; word-break:break-word; color:#000; }
+    .badge.badge-active   { background:#198754; }
+    .badge.badge-inactive { background:#6c757d; }
+    .badge.badge-blocked  { background:#dc3545; }
+    .badge.badge-locked   { background:#495057; }
+    .chip { display:inline-block; padding:5px 11px; border-radius:6px; font-size:13px; background:#eef1f6; color:#333; border:1px solid #e0e4ec; margin:0 6px 6px 0; }
+    .lock-note { color:#555; font-size:13px; line-height:1.6; }
+    @media print { .no-print { display:none !important; } }
 </style>
 
-</head>
-
-<body>
-
-<div class="container">
-
-    <div class="card no-print">
-        <a class="back-link" href="../dashboard.php">&larr; Back to Dashboard</a>
+    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+        <h4 class="mb-0">My Profile</h4>
+        <a href="../dashboard.php" class="btn btn-outline-secondary btn-sm">&larr; Back to Dashboard</a>
     </div>
 
     <?php if ($show_ok !== ""): ?>
-        <div class="msg msg-ok"><?= htmlspecialchars($show_ok) ?></div>
+        <div class="alert alert-success"><?= htmlspecialchars($show_ok) ?></div>
     <?php endif; ?>
 
     <?php if ($show_err !== ""): ?>
-        <div class="msg msg-err"><?= htmlspecialchars($show_err) ?></div>
+        <div class="alert alert-danger"><?= htmlspecialchars($show_err) ?></div>
     <?php endif; ?>
 
     <!-- ================= 1. PROFILE HEADER ================= -->
 
-    <div class="card">
+    <div class="card mb-4">
 
-        <div class="profile-head">
+        <div class="card-body">
 
-            <div class="avatar">
+            <div class="profile-head">
+
+                <div class="avatar">
                 <?php if ($photo_path !== ""): ?>
                     <img
                         src="../../<?= htmlspecialchars($photo_path) ?>"
@@ -155,15 +166,19 @@ $show_err = (isset($err_messages[$flash_err])) ? $err_messages[$flash_err] : "";
 
         </div>
 
+        </div>
+
     </div>
 
     <!-- ================= 2. PERSONAL INFORMATION ================= -->
 
-    <div class="card">
+    <div class="card mb-4">
 
-        <h2>Personal Information</h2>
+        <div class="card-header"><strong>Personal Information</strong></div>
 
-        <div class="detail-grid">
+        <div class="card-body">
+
+            <div class="detail-grid">
 
             <div class="detail-item">
                 <span>Full Name</span>
@@ -214,10 +229,12 @@ $show_err = (isset($err_messages[$flash_err])) ? $err_messages[$flash_err] : "";
 
         <div class="toolbar no-print">
             <?php if ($can_edit): ?>
-                <a class="btn btn-outline" href="edit.php">✏️ Edit Contact Details</a>
+                <a class="btn btn-outline-primary" href="edit.php">✏️ Edit Contact Details</a>
             <?php else: ?>
                 <span class="badge badge-locked">Contact details are managed by the school</span>
             <?php endif; ?>
+        </div>
+
         </div>
 
     </div>
@@ -226,11 +243,13 @@ $show_err = (isset($err_messages[$flash_err])) ? $err_messages[$flash_err] : "";
 
     <!-- ================= 3. PROFESSIONAL INFORMATION ================= -->
 
-    <div class="card">
+    <div class="card mb-4">
 
-        <h2>Professional Information</h2>
+        <div class="card-header"><strong>Professional Information</strong></div>
 
-        <div class="detail-grid">
+        <div class="card-body">
+
+            <div class="detail-grid">
 
             <div class="detail-item">
                 <span>Employee ID</span>
@@ -304,21 +323,25 @@ $show_err = (isset($err_messages[$flash_err])) ? $err_messages[$flash_err] : "";
 
         </div>
 
+        </div>
+
     </div>
 
 
 
     <!-- ================= 4. SCHOOL INFORMATION ================= -->
 
-    <div class="card">
+    <div class="card mb-4">
 
-        <h2>School Information</h2>
+        <div class="card-header"><strong>School Information</strong></div>
 
-        <div class="detail-grid">
+        <div class="card-body">
 
-            <div class="detail-item">
-                <span>School Name</span>
-                <strong><?= htmlspecialchars(($profile["school_name"] !== "") ? $profile["school_name"] : "-") ?></strong>
+            <div class="detail-grid">
+
+                <div class="detail-item">
+                    <span>School Name</span>
+                    <strong><?= htmlspecialchars(($profile["school_name"] !== "") ? $profile["school_name"] : "-") ?></strong>
             </div>
 
             <div class="detail-item">
@@ -370,20 +393,24 @@ $show_err = (isset($err_messages[$flash_err])) ? $err_messages[$flash_err] : "";
 
         </div>
 
+        </div>
+
     </div>
 
     <!-- ================= 5. ACCOUNT & SECURITY ================= -->
 
-    <div class="card">
+    <div class="card mb-4">
 
-        <h2>Account &amp; Security</h2>
+        <div class="card-header"><strong>Account &amp; Security</strong></div>
 
-        <div class="detail-grid">
+        <div class="card-body">
 
-            <div class="detail-item">
-                <span>Username</span>
-                <strong><?= htmlspecialchars($profile["username"]) ?></strong>
-            </div>
+            <div class="detail-grid">
+
+                <div class="detail-item">
+                    <span>Username</span>
+                    <strong><?= htmlspecialchars($profile["username"]) ?></strong>
+                </div>
 
             <div class="detail-item">
                 <span>Role</span>
@@ -421,16 +448,14 @@ $show_err = (isset($err_messages[$flash_err])) ? $err_messages[$flash_err] : "";
         </div>
 
         <div class="toolbar no-print">
-            <a class="btn" href="change-password.php">🔐 Change Password</a>
+            <a class="btn btn-primary" href="change-password.php">🔐 Change Password</a>
             <a class="btn btn-secondary" href="photo.php">🖼️ Update Profile Photo</a>
             <a class="btn btn-danger" href="logout.php">🚪 Logout from Account</a>
         </div>
 
+        </div>
+
     </div>
 
-</div>
-
-</body>
-
-</html>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 

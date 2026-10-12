@@ -203,150 +203,163 @@ $filters_applied = (
 $clear_filters_url = "index.php";
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Notices</title>
+<?php
+$UI_ROOT         = '../';
+$UI_ACTIVE       = 'notices';
+$UI_TITLE        = 'Notices';
+$UI_CRUMBS       = [];
+$UI_PROFILE_NAME = $teacher_name;
+include __DIR__ . '/../includes/header.php';
+?>
 
 <style>
-<?= noticeModuleStyles() ?>
+    /* keep the existing priority / read / pin / attachment colours on Bootstrap badges */
+    .badge.priority-normal    { background:#6c757d; }
+    .badge.priority-important { background:#fd7e14; }
+    .badge.priority-urgent    { background:#dc3545; }
+    .badge.badge-read   { background:#adb5bd; }
+    .badge.badge-unread { background:#dc3545; }
+    .badge.badge-pin    { background:#0d6efd; }
+    .badge.badge-att    { background:#198754; }
+    .chip { display:inline-block; padding:4px 10px; border-radius:6px; font-size:12px; background:#eef1f6; color:#333; border:1px solid #e0e4ec; white-space:nowrap; }
+    table.notices-table tr.is-unread { background:#f0f7ff; }
+    table.notices-table tr.priority-urgent-row td:first-child { box-shadow: inset 4px 0 0 #dc3545; }
+    table.notices-table tr.priority-important-row td:first-child { box-shadow: inset 4px 0 0 #fd7e14; }
+    .notice-title { font-weight:bold; color:#1a1a1a; text-decoration:none; }
+    .notice-title:hover { text-decoration:underline; }
+    .notice-desc { color:#555; font-size:13px; margin-top:3px; }
+    .who { color:#6b7280; font-size:12px; margin-top:3px; }
+    @media print { .no-print { display:none !important; } }
 </style>
-
-</head>
-
-<body>
-
-<div class="container">
 
     <!-- ================= HEADER ================= -->
 
-    <div class="card">
+    <div class="card mb-4">
 
-        <a class="back-link" href="../dashboard.php">&larr; Back to Dashboard</a>
-
-        <h1>Notices</h1>
-
-        <div class="teacher-info">
-            Teacher:
-            <strong><?= htmlspecialchars($teacher_name) ?></strong>
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <strong>Notices</strong>
+            <a href="../dashboard.php" class="btn btn-outline-secondary btn-sm">&larr; Back to Dashboard</a>
         </div>
 
-        <div class="notice-msg">
-            You can read the notices issued by the school and download any
-            attachment. Creating, editing, deleting or publishing a notice is
-            managed by the school administrator.
+        <div class="card-body">
+
+            <p class="text-body-secondary mb-2">
+                Teacher: <strong><?= htmlspecialchars($teacher_name) ?></strong>
+            </p>
+
+            <div class="alert alert-info mb-0">
+                You can read the notices issued by the school and download any
+                attachment. Creating, editing, deleting or publishing a notice is
+                managed by the school administrator.
+            </div>
+
         </div>
 
     </div>
 
 <?php if (!$has_assignments): ?>
 
-    <div class="card">
-        <div class="empty">
-            No class or section has been assigned to you yet, so no notice can
-            be matched to you. Please contact the school administrator.
-        </div>
+    <div class="alert alert-warning" role="alert">
+        No class or section has been assigned to you yet, so no notice can
+        be matched to you. Please contact the school administrator.
     </div>
 
 <?php else: ?>
 
     <!-- ================= 1. NOTICE SUMMARY ================= -->
 
-    <div class="card">
-
-        <h2>Notice Summary</h2>
-
-        <p class="muted">
-            Counts cover every notice published for you, including the expired ones.
-        </p>
-
-        <div class="summary">
-
-            <div class="summary-card accent-total">
-                <span>Total Notices</span>
-                <strong><?= (int)$summary["total"] ?></strong>
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-body-secondary small text-uppercase">Total Notices</div>
+                    <div class="fs-4 fw-semibold text-primary"><?= (int)$summary["total"] ?></div>
+                </div>
             </div>
-
-            <div class="summary-card accent-unread">
-                <span>New / Unread</span>
-                <strong><?= (int)$summary["unread"] ?></strong>
-            </div>
-
-            <div class="summary-card accent-important">
-                <span>Important</span>
-                <strong><?= (int)$summary["important"] ?></strong>
-            </div>
-
-            <div class="summary-card accent-expired">
-                <span>Expired</span>
-                <strong><?= (int)$summary["expired"] ?></strong>
-            </div>
-
         </div>
-
+        <div class="col-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-body-secondary small text-uppercase">New / Unread</div>
+                    <div class="fs-4 fw-semibold text-danger"><?= (int)$summary["unread"] ?></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-body-secondary small text-uppercase">Important</div>
+                    <div class="fs-4 fw-semibold text-warning"><?= (int)$summary["important"] ?></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-body-secondary small text-uppercase">Expired</div>
+                    <div class="fs-4 fw-semibold text-secondary"><?= (int)$summary["expired"] ?></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- ================= 2. FILTERS ================= -->
 
-    <div class="card">
+    <div class="card mb-4">
 
-        <h2>Filters</h2>
+        <div class="card-header"><strong>Filters</strong></div>
 
-        <form method="get" action="index.php">
+        <div class="card-body">
 
-            <div class="filter-grid">
+            <form method="get" action="index.php">
 
-                <div>
-                    <label for="category">Category</label>
-                    <select name="category" id="category">
-                        <option value="">All Categories</option>
-                        <?php foreach ($valid_categories as $notice_cat): ?>
-                            <option value="<?= htmlspecialchars($notice_cat) ?>" <?= ($filter_category === $notice_cat) ? "selected" : "" ?>><?= htmlspecialchars($notice_cat) ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                <div class="row g-3">
+
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <label class="form-label" for="category">Category</label>
+                        <select class="form-select" name="category" id="category">
+                            <option value="">All Categories</option>
+                            <?php foreach ($valid_categories as $notice_cat): ?>
+                                <option value="<?= htmlspecialchars($notice_cat) ?>" <?= ($filter_category === $notice_cat) ? "selected" : "" ?>><?= htmlspecialchars($notice_cat) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <label class="form-label" for="priority">Priority</label>
+                        <select class="form-select" name="priority" id="priority">
+                            <option value="">All Priorities</option>
+                            <?php foreach ($valid_priorities as $notice_pri): ?>
+                                <option value="<?= htmlspecialchars($notice_pri) ?>" <?= ($filter_priority === $notice_pri) ? "selected" : "" ?>><?= htmlspecialchars($notice_pri) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <label class="form-label" for="read">Read Status</label>
+                        <select class="form-select" name="read" id="read">
+                            <option value="">All</option>
+                            <option value="unread" <?= ($filter_read === "unread") ? "selected" : "" ?>>Unread</option>
+                            <option value="read"   <?= ($filter_read === "read")   ? "selected" : "" ?>>Read</option>
+                        </select>
+                    </div>
+
+                    <div class="col-6 col-md-3 col-xl-3">
+                        <label class="form-label" for="date_from">Date From</label>
+                        <input type="date" class="form-control" name="date_from" id="date_from" value="<?= htmlspecialchars($filter_from) ?>">
+                    </div>
+
+                    <div class="col-6 col-md-3 col-xl-3">
+                        <label class="form-label" for="date_to">Date To</label>
+                        <input type="date" class="form-control" name="date_to" id="date_to" value="<?= htmlspecialchars($filter_to) ?>">
+                    </div>
+
                 </div>
 
-                <div>
-                    <label for="priority">Priority</label>
-                    <select name="priority" id="priority">
-                        <option value="">All Priorities</option>
-                        <?php foreach ($valid_priorities as $notice_pri): ?>
-                            <option value="<?= htmlspecialchars($notice_pri) ?>" <?= ($filter_priority === $notice_pri) ? "selected" : "" ?>><?= htmlspecialchars($notice_pri) ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a class="btn btn-secondary" href="<?= htmlspecialchars($clear_filters_url) ?>">Clear Filters</a>
                 </div>
-
-                <div>
-                    <label for="read">Read Status</label>
-                    <select name="read" id="read">
-                        <option value="">All</option>
-                        <option value="unread" <?= ($filter_read === "unread") ? "selected" : "" ?>>Unread</option>
-                        <option value="read"   <?= ($filter_read === "read")   ? "selected" : "" ?>>Read</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="date_from">Date From</label>
-                    <input type="date" name="date_from" id="date_from" value="<?= htmlspecialchars($filter_from) ?>">
-                </div>
-
-                <div>
-                    <label for="date_to">Date To</label>
-                    <input type="date" name="date_to" id="date_to" value="<?= htmlspecialchars($filter_to) ?>">
-                </div>
-
-            </div>
-
-            <div class="toolbar">
-                <button type="submit" class="btn">Apply Filters</button>
-                <a class="btn btn-secondary" href="<?= htmlspecialchars($clear_filters_url) ?>">Clear Filters</a>
-            </div>
 
         </form>
 
@@ -366,25 +379,29 @@ $render_notice_table = function ($rows, $is_expired_section) use ($notice_has_at
     ?>
 
 
-    <div class="card">
+    <div class="card mb-4">
 
-        <h2>
-            <?= $is_expired_section ? "Expired Notices" : "Notices" ?>
-            <span class="muted">(<?= count($rows) ?>)</span>
-        </h2>
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <strong><?= $is_expired_section ? "Expired Notices" : "Notices" ?></strong>
+            <span class="badge bg-secondary"><?= count($rows) ?></span>
+        </div>
 
-        <table>
+        <div class="card-body">
 
-            <thead>
-                <tr>
-                    <th>Notice</th>
-                    <th>Date</th>
-                    <th>Category</th>
-                    <th>Priority</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle notices-table mb-0">
+
+                    <thead>
+                        <tr>
+                            <th>Notice</th>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
 
             <tbody>
 
@@ -441,17 +458,19 @@ $render_notice_table = function ($rows, $is_expired_section) use ($notice_has_at
                     </td>
 
                     <td>
-                        <a class="btn btn-outline btn-sm" href="view.php?uid=<?= urlencode((string)$notice_row["notice_uid"]) ?>">👁️ View</a>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-outline-primary btn-sm" href="view.php?uid=<?= urlencode((string)$notice_row["notice_uid"]) ?>">👁️ View</a>
 
-                        <form method="post" action="mark.php" style="display:inline;">
-                            <?php echo csrfField(); ?>
-                            <input type="hidden" name="uid" value="<?= htmlspecialchars((string)$notice_row["notice_uid"]) ?>">
-                            <input type="hidden" name="state" value="<?= $notice_read ? "unread" : "read" ?>">
-                            <input type="hidden" name="back" value="index.php?<?= htmlspecialchars(http_build_query($_GET)) ?>">
-                            <button type="submit" class="btn btn-secondary btn-sm">
-                                <?= $notice_read ? "Mark Unread" : "Mark Read" ?>
-                            </button>
-                        </form>
+                            <form method="post" action="mark.php" class="d-inline">
+                                <?php echo csrfField(); ?>
+                                <input type="hidden" name="uid" value="<?= htmlspecialchars((string)$notice_row["notice_uid"]) ?>">
+                                <input type="hidden" name="state" value="<?= $notice_read ? "unread" : "read" ?>">
+                                <input type="hidden" name="back" value="index.php?<?= htmlspecialchars(http_build_query($_GET)) ?>">
+                                <button type="submit" class="btn btn-secondary btn-sm">
+                                    <?= $notice_read ? "Mark Unread" : "Mark Read" ?>
+                                </button>
+                            </form>
+                        </div>
                     </td>
 
                 </tr>
@@ -460,7 +479,11 @@ $render_notice_table = function ($rows, $is_expired_section) use ($notice_has_at
 
             </tbody>
 
-        </table>
+            </table>
+
+            </div>
+
+        </div>
 
     </div>
 
@@ -473,11 +496,13 @@ $render_notice_table($display_expired, true);
 if (empty($display_active) && empty($display_expired)) {
     ?>
 
-    <div class="card">
-        <div class="empty">
-            <?= $filters_applied
-                    ? "No notices match the selected filters. Try changing or clearing them."
-                    : "No notice has been published for you yet." ?>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="alert alert-warning mb-0">
+                <?= $filters_applied
+                        ? "No notices match the selected filters. Try changing or clearing them."
+                        : "No notice has been published for you yet." ?>
+            </div>
         </div>
     </div>
 
@@ -488,9 +513,5 @@ if (empty($display_active) && empty($display_expired)) {
 
 <?php endif; ?>
 
-</div>
-
-</body>
-
-</html>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 
